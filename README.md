@@ -48,9 +48,12 @@ In dit level leren kinderen de namen van belangrijke Nederlandse wateren:
 ## Features
 - Twee levels met verschillende moeilijkheidsgraden
 - Interactieve kaart met gemarkeerde gebieden
+- **Geografisch accurate kaart van Nederland** met realistische provincie- en waterlichaamvormen
+- **Overlay highlighting** voor de gevraagde regio's en steden
 - Score tracking
 - Direct feedback op antwoorden
 - Responsief ontwerp voor verschillende schermformaten
+- **Automatische deployment naar GitHub Pages**
 
 ## Technologie
 - HTML5
@@ -59,3 +62,12 @@ In dit level leren kinderen de namen van belangrijke Nederlandse wateren:
 
 ## Installatie
 Geen installatie nodig! Open gewoon `index.html` in een moderne webbrowser.
+
+## Deployment
+De applicatie wordt automatisch gedeployed naar GitHub Pages bij elke push naar de main branch. Je kunt het spel spelen op: `https://[username].github.io/Topotest/`
+
+Om GitHub Pages in te schakelen:
+1. Ga naar de repository Settings
+2. Navigeer naar Pages onder de Code and automation sectie
+3. Selecteer "GitHub Actions" als bron
+4. De workflow in `.github/workflows/deploy.yml` zorgt voor automatische deployment

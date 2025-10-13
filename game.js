@@ -39,36 +39,68 @@ let currentData = [];
 let shuffledData = [];
 let askedQuestions = [];
 
-// SVG map coordinates for provinces (simplified positions)
-const provincePositions = {
-    "Groningen": { x: 600, y: 100, width: 150, height: 120 },
-    "Friesland": { x: 400, y: 80, width: 180, height: 100 },
-    "Drenthe": { x: 550, y: 220, width: 130, height: 100 },
-    "Overijssel": { x: 500, y: 320, width: 150, height: 120 },
-    "Flevoland": { x: 400, y: 280, width: 80, height: 100 },
-    "Gelderland": { x: 500, y: 450, width: 180, height: 180 },
-    "Utrecht": { x: 350, y: 400, width: 100, height: 80 },
-    "Noord-Holland": { x: 250, y: 200, width: 130, height: 180 },
-    "Zuid-Holland": { x: 200, y: 400, width: 130, height: 120 },
-    "Zeeland": { x: 150, y: 550, width: 150, height: 100 },
-    "Noord-Brabant": { x: 300, y: 600, width: 250, height: 120 },
-    "Limburg": { x: 500, y: 700, width: 100, height: 200 }
+// SVG map paths for provinces (geographical shapes)
+const provincePaths = {
+    "Groningen": "M 520,20 L 580,15 L 620,25 L 640,45 L 650,70 L 645,95 L 630,110 L 610,115 L 590,110 L 570,95 L 550,75 L 535,55 L 525,35 Z",
+    "Friesland": "M 340,30 L 380,25 L 420,28 L 460,35 L 495,50 L 515,70 L 520,90 L 510,105 L 495,110 L 475,105 L 445,95 L 410,85 L 380,75 L 355,65 L 340,50 Z",
+    "Drenthe": "M 520,95 L 565,100 L 590,115 L 600,135 L 595,160 L 575,170 L 550,165 L 530,155 L 520,140 L 515,120 Z",
+    "Overijssel": "M 480,110 L 520,115 L 545,125 L 560,145 L 565,170 L 560,195 L 545,215 L 525,225 L 500,225 L 480,215 L 465,195 L 460,170 L 465,145 L 475,125 Z",
+    "Flevoland": "M 360,145 L 390,140 L 415,145 L 430,160 L 435,180 L 430,200 L 415,210 L 390,210 L 370,200 L 360,180 Z",
+    "Gelderland": "M 475,220 L 520,225 L 555,235 L 580,255 L 595,285 L 600,320 L 590,355 L 570,375 L 545,385 L 515,390 L 485,385 L 460,370 L 445,350 L 435,325 L 430,295 L 440,265 L 455,240 Z",
+    "Utrecht": "M 345,230 L 375,225 L 405,230 L 425,245 L 435,265 L 435,285 L 425,300 L 405,310 L 375,310 L 350,300 L 340,280 L 340,255 Z",
+    "Noord-Holland": "M 230,85 L 265,80 L 295,85 L 320,100 L 335,125 L 340,150 L 335,180 L 320,205 L 295,220 L 265,225 L 235,215 L 215,195 L 205,170 L 200,140 L 210,110 Z",
+    "Zuid-Holland": "M 195,230 L 230,225 L 265,230 L 290,245 L 305,265 L 310,285 L 305,305 L 285,320 L 255,325 L 225,320 L 200,305 L 185,285 L 180,260 L 185,240 Z",
+    "Zeeland": "M 85,355 L 120,350 L 155,355 L 185,365 L 210,380 L 225,395 L 220,410 L 200,420 L 170,422 L 140,418 L 110,410 L 85,395 L 75,375 Z",
+    "Noord-Brabant": "M 230,330 L 280,325 L 330,330 L 370,340 L 410,355 L 445,370 L 470,385 L 475,405 L 465,420 L 440,430 L 400,435 L 355,435 L 310,430 L 270,420 L 240,405 L 220,385 L 215,365 L 220,345 Z",
+    "Limburg": "M 475,395 L 495,390 L 515,395 L 530,410 L 540,435 L 545,465 L 545,495 L 540,525 L 530,550 L 515,565 L 495,570 L 480,565 L 465,550 L 455,525 L 450,495 L 450,465 L 455,435 L 465,410 Z"
 };
 
-// SVG map coordinates for waterways (simplified paths)
-const waterwayPositions = {
-    "IJssel": { x: 520, y: 300, width: 40, height: 150 },
-    "Maas": { x: 450, y: 650, width: 50, height: 200 },
-    "Waal": { x: 400, y: 520, width: 150, height: 40 },
-    "Neder-Rijn": { x: 380, y: 480, width: 120, height: 30 },
-    "Amsterdam-Rijnkanaal": { x: 350, y: 350, width: 100, height: 80 },
-    "Waddenzee": { x: 350, y: 50, width: 300, height: 60 },
-    "Oosterschelde": { x: 180, y: 580, width: 100, height: 30 },
-    "Westerschelde": { x: 100, y: 620, width: 150, height: 30 },
-    "IJsselmeer": { x: 320, y: 220, width: 80, height: 100 },
-    "Markermeer": { x: 370, y: 260, width: 50, height: 60 },
-    "Nieuwe Waterweg": { x: 180, y: 450, width: 80, height: 20 },
-    "Lek": { x: 320, y: 470, width: 100, height: 25 }
+// Label positions for provinces (center of each province)
+const provinceLabelPositions = {
+    "Groningen": { x: 585, y: 65 },
+    "Friesland": { x: 425, y: 70 },
+    "Drenthe": { x: 560, y: 135 },
+    "Overijssel": { x: 505, y: 165 },
+    "Flevoland": { x: 395, y: 175 },
+    "Gelderland": { x: 515, y: 305 },
+    "Utrecht": { x: 385, y: 268 },
+    "Noord-Holland": { x: 270, y: 155 },
+    "Zuid-Holland": { x: 245, y: 275 },
+    "Zeeland": { x: 150, y: 385 },
+    "Noord-Brabant": { x: 345, y: 380 },
+    "Limburg": { x: 495, y: 480 }
+};
+
+// SVG map paths for waterways (geographical shapes)
+const waterwayPaths = {
+    "IJssel": "M 505,180 L 510,200 L 515,220 L 520,245 L 525,270 L 530,295 L 532,315",
+    "Maas": "M 470,380 L 475,405 L 480,430 L 485,455 L 490,480 L 493,505 L 495,530 L 497,555",
+    "Waal": "M 405,305 L 430,310 L 455,315 L 480,318 L 505,320 L 530,322",
+    "Neder-Rijn": "M 375,295 L 395,297 L 415,299 L 435,300 L 455,301",
+    "Amsterdam-Rijnkanaal": "M 340,200 L 350,215 L 360,230 L 370,245 L 380,260 L 388,275",
+    "Waddenzee": "M 250,40 L 350,35 L 450,40 L 550,45 L 630,55 L 630,75 L 550,70 L 450,65 L 350,60 L 250,55 Z",
+    "Oosterschelde": "M 155,365 L 180,368 L 205,370 L 225,371",
+    "Westerschelde": "M 85,395 L 110,397 L 135,399 L 160,400 L 185,401",
+    "IJsselmeer": "M 320,130 L 345,128 L 365,130 L 380,135 L 390,145 L 395,160 L 390,175 L 380,185 L 365,190 L 345,192 L 325,190 L 310,180 L 305,165 L 310,148 Z",
+    "Markermeer": "M 360,160 L 375,158 L 390,160 L 400,165 L 405,175 L 400,185 L 390,190 L 375,192 L 360,190 L 352,182 L 350,172 Z",
+    "Nieuwe Waterweg": "M 185,290 L 210,292 L 235,294 L 260,295",
+    "Lek": "M 305,305 L 330,307 L 355,309 L 380,310 L 405,311"
+};
+
+// Label positions for waterways
+const waterwayLabelPositions = {
+    "IJssel": { x: 520, y: 245 },
+    "Maas": { x: 490, y: 465 },
+    "Waal": { x: 465, y: 318 },
+    "Neder-Rijn": { x: 415, y: 298 },
+    "Amsterdam-Rijnkanaal": { x: 365, y: 235 },
+    "Waddenzee": { x: 440, y: 58 },
+    "Oosterschelde": { x: 190, y: 370 },
+    "Westerschelde": { x: 135, y: 398 },
+    "IJsselmeer": { x: 355, y: 160 },
+    "Markermeer": { x: 380, y: 175 },
+    "Nieuwe Waterweg": { x: 225, y: 293 },
+    "Lek": { x: 355, y: 308 }
 };
 
 // Initialize the game
@@ -282,8 +314,8 @@ function drawMap() {
     if (!gameStarted) {
         // Show welcome message
         const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.setAttribute('x', '400');
-        text.setAttribute('y', '500');
+        text.setAttribute('x', '350');
+        text.setAttribute('y', '300');
         text.setAttribute('text-anchor', 'middle');
         text.setAttribute('font-size', '24');
         text.setAttribute('fill', '#666');
@@ -294,7 +326,8 @@ function drawMap() {
     
     if (currentQuestionIndex >= shuffledData.length) return;
     
-    const positions = currentLevel === 1 ? provincePositions : waterwayPositions;
+    const paths = currentLevel === 1 ? provincePaths : waterwayPaths;
+    const labelPositions = currentLevel === 1 ? provinceLabelPositions : waterwayLabelPositions;
     const currentQuestion = shuffledData[currentQuestionIndex];
     
     // For level 1, randomly decide whether to ask for province or capital
@@ -303,42 +336,55 @@ function drawMap() {
     }
     
     // Draw all regions
-    Object.keys(positions).forEach(regionName => {
-        const pos = positions[regionName];
-        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    Object.keys(paths).forEach(regionName => {
+        const pathData = paths[regionName];
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         
-        rect.setAttribute('x', pos.x);
-        rect.setAttribute('y', pos.y);
-        rect.setAttribute('width', pos.width);
-        rect.setAttribute('height', pos.height);
-        rect.setAttribute('class', 'map-region');
+        path.setAttribute('d', pathData);
+        path.setAttribute('data-region', regionName);
+        
+        // Different styling for waterways vs provinces
+        if (currentLevel === 2) {
+            // Waterways: drawn as lines
+            path.setAttribute('class', 'map-waterway');
+            path.setAttribute('fill', 'none');
+            path.setAttribute('stroke', '#4A90E2');
+            path.setAttribute('stroke-width', '8');
+        } else {
+            // Provinces: drawn as filled shapes
+            path.setAttribute('class', 'map-region');
+        }
         
         // Highlight the current question
         if (currentLevel === 1) {
             const askingForProvince = askedQuestions[currentQuestionIndex] === 'province';
             if (regionName === currentQuestion.name) {
-                rect.classList.add('highlighted');
+                path.classList.add('highlighted');
             }
         } else {
             if (regionName === currentQuestion.name) {
-                rect.classList.add('highlighted');
+                path.classList.add('highlighted');
             }
         }
         
-        mapSvg.appendChild(rect);
+        mapSvg.appendChild(path);
         
         // Add label for non-highlighted regions
-        if (!rect.classList.contains('highlighted')) {
-            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            text.setAttribute('x', pos.x + pos.width / 2);
-            text.setAttribute('y', pos.y + pos.height / 2);
-            text.setAttribute('text-anchor', 'middle');
-            text.setAttribute('dominant-baseline', 'middle');
-            text.setAttribute('font-size', '12');
-            text.setAttribute('fill', '#2c3e50');
-            text.setAttribute('pointer-events', 'none');
-            text.textContent = regionName;
-            mapSvg.appendChild(text);
+        if (!path.classList.contains('highlighted')) {
+            const labelPos = labelPositions[regionName];
+            if (labelPos) {
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', labelPos.x);
+                text.setAttribute('y', labelPos.y);
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('dominant-baseline', 'middle');
+                text.setAttribute('font-size', '11');
+                text.setAttribute('fill', '#2c3e50');
+                text.setAttribute('pointer-events', 'none');
+                text.setAttribute('font-weight', 'bold');
+                text.textContent = regionName;
+                mapSvg.appendChild(text);
+            }
         }
     });
     
