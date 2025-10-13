@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topotest - Nederlandse Topografie Quiz</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Topotest</h1>
+            <p class="subtitle">Leer de Nederlandse topografie!</p>
+        </header>
+
+        <div class="game-container">
+            <div class="level-selector">
+                <button id="level1-btn" class="level-btn active" onclick="selectLevel(1)">
+                    Level 1: Provincies & Hoofdsteden
+                </button>
+                <button id="level2-btn" class="level-btn" onclick="selectLevel(2)">
+                    Level 2: Wateren
+                </button>
+            </div>
+
+            <div class="stats">
+                <div class="stat">
+                    <span class="stat-label">Score:</span>
+                    <span id="score" class="stat-value">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Vraag:</span>
+                    <span id="question-number" class="stat-value">0/0</span>
+                </div>
+            </div>
+
+            <div class="map-container">
+                <svg id="map" viewBox="0 0 800 1000">
+                    <!-- Map will be drawn here -->
+                </svg>
+            </div>
+
+            <div class="question-container">
+                <h2 id="question">Wat is de naam van het gemarkeerde gebied?</h2>
+                <input type="text" id="answer-input" placeholder="Voer je antwoord in..." autocomplete="off">
+                <button id="submit-btn" onclick="checkAnswer()">Controleer</button>
+                <div id="feedback" class="feedback"></div>
+            </div>
+
+            <div class="controls">
+                <button id="start-btn" onclick="startGame()">Start Spel</button>
+                <button id="next-btn" onclick="nextQuestion()" style="display: none;">Volgende</button>
+                <button id="restart-btn" onclick="restartGame()" style="display: none;">Opnieuw Spelen</button>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2025 Topotest - Een educatief spel voor kinderen</p>
+        </footer>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
