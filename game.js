@@ -71,6 +71,25 @@ const waterwayPaths = {
     "Lek": "M 320,314 L 350,315 L 380,316 L 410,317 L 440,318"
 };
 
+// Use the simplified embedded provinces GeoJSON (kept small for offline/file:// use)
+const EMBEDDED_PROVINCES = {
+    "type": "FeatureCollection",
+    "features": [
+        { "type": "Feature", "properties": { "NAME": "Groningen" }, "geometry": { "type": "Polygon", "coordinates": [[[6.1, 53.5],[6.8,53.5],[7.0,53.3],[6.6,53.0],[6.2,53.0],[6.1,53.2],[6.1,53.5]]] } },
+        { "type": "Feature", "properties": { "NAME": "Friesland" },  "geometry": { "type": "Polygon", "coordinates": [[[5.2,53.3],[6.0,53.3],[6.2,53.1],[5.9,52.9],[5.4,52.9],[5.2,53.1],[5.2,53.3]]] } },
+        { "type": "Feature", "properties": { "NAME": "Drenthe" },   "geometry": { "type": "Polygon", "coordinates": [[[6.0,52.9],[6.6,52.9],[6.7,52.6],[6.4,52.5],[6.0,52.6],[6.0,52.9]]] } },
+        { "type": "Feature", "properties": { "NAME": "Overijssel" },"geometry": { "type": "Polygon", "coordinates": [[[5.8,52.6],[6.4,52.6],[6.6,52.3],[6.2,52.0],[5.8,52.1],[5.8,52.6]]] } },
+        { "type": "Feature", "properties": { "NAME": "Flevoland" }, "geometry": { "type": "Polygon", "coordinates": [[[5.0,52.5],[5.6,52.5],[5.8,52.3],[5.4,52.1],[5.0,52.2],[5.0,52.5]]] } },
+        { "type": "Feature", "properties": { "NAME": "Gelderland" }, "geometry": { "type": "Polygon", "coordinates": [[[5.8,52.2],[6.6,52.2],[6.8,51.9],[6.2,51.6],[5.8,51.7],[5.8,52.2]]] } },
+        { "type": "Feature", "properties": { "NAME": "Utrecht" },    "geometry": { "type": "Polygon", "coordinates": [[[5.0,52.1],[5.6,52.1],[5.8,51.9],[5.4,51.8],[5.0,51.9],[5.0,52.1]]] } },
+        { "type": "Feature", "properties": { "NAME": "Noord-Holland" },"geometry": { "type": "Polygon", "coordinates": [[[4.5,52.4],[5.4,52.4],[5.6,52.1],[5.2,51.9],[4.8,51.9],[4.5,52.1],[4.5,52.4]]] } },
+        { "type": "Feature", "properties": { "NAME": "Zuid-Holland" },"geometry": { "type": "Polygon", "coordinates": [[[4.0,52.0],[5.0,52.0],[5.2,51.7],[4.8,51.6],[4.3,51.7],[4.0,52.0]]] } },
+        { "type": "Feature", "properties": { "NAME": "Zeeland" },     "geometry": { "type": "Polygon", "coordinates": [[[3.6,51.3],[4.2,51.3],[4.3,51.1],[3.9,51.0],[3.6,51.1],[3.6,51.3]]] } },
+        { "type": "Feature", "properties": { "NAME": "Noord-Brabant" },"geometry": { "type": "Polygon", "coordinates": [[[4.6,51.6],[5.6,51.6],[5.8,51.3],[5.2,51.0],[4.6,51.0],[4.6,51.6]]] } },
+        { "type": "Feature", "properties": { "NAME": "Limburg" },     "geometry": { "type": "Polygon", "coordinates": [[[5.6,50.9],[6.4,50.9],[6.6,50.6],[6.0,50.5],[5.6,50.6],[5.6,50.9]]] } }
+    ]
+};
+
 // Initialize the game
 function init() {
     selectLevel(1);
@@ -296,6 +315,8 @@ function drawMap() {
     
     const paths = currentLevel === 1 ? provincePaths : waterwayPaths;
     const currentQuestion = shuffledData[currentQuestionIndex];
+
+    // SVG defs live in index.html (landPatternBase, waterGradient, waterGlow, shadow)
     
     // For level 1, randomly decide whether to ask for province or capital
     if (currentLevel === 1 && askedQuestions.length === currentQuestionIndex) {
@@ -303,56 +324,227 @@ function drawMap() {
     }
     
     // Draw all regions
-    Object.keys(paths).forEach(regionName => {
-        const pathData = paths[regionName];
-        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        
-        path.setAttribute('d', pathData);
-        path.setAttribute('data-region', regionName);
-        
-        // Different styling for waterways vs provinces
-        if (currentLevel === 2) {
-            // Waterways: drawn as lines
-            path.setAttribute('class', 'map-waterway');
-            path.setAttribute('fill', 'none');
-            path.setAttribute('stroke', '#4A90E2');
-            path.setAttribute('stroke-width', '8');
-        } else {
-            // Provinces: drawn as filled shapes
-            path.setAttribute('class', 'map-region');
+    const tintMap = {
+        "Groningen": '#c77c6b',
+        "Friesland": '#d08a6c',
+        "Drenthe": '#c46f53',
+        "Overijssel": '#d89b75',
+        "Flevoland": '#e0ad86',
+        "Gelderland": '#b96447',
+        "Utrecht": '#c97a5f',
+        "Noord-Holland": '#d99b78',
+        "Zuid-Holland": '#cc6b4a',
+        "Zeeland": '#b86b53',
+        "Noord-Brabant": '#b85a45',
+        "Limburg": '#a84f3f'
+    };
+
+    // Try loading a detailed local GeoJSON first (assets/provinces.geojson).
+    // If that fails (missing file, parse error, or CORS when served via file://), fall back to the embedded simplified dataset.
+    (async function tryLoadLocalGeoJSON() {
+        try {
+            const resp = await fetch('assets/provinces.geojson');
+            if (resp.ok) {
+                const geo = await resp.json();
+                renderGeoJSON(geo);
+                setQuestionText();
+                return;
+            }
+        } catch (e) {
+            // fetch can fail under file:// or if the file is absent — fall back below
         }
-        
-        // Highlight the current question
+
+        // final fallback: embedded simplified data
+        try {
+            renderGeoJSON(EMBEDDED_PROVINCES);
+            setQuestionText();
+            return;
+        } catch (err) {
+            // fall through to the old vector fallback
+        }
+    })();
+
+    // Render helper for GeoJSON via D3
+    function renderGeoJSON(geojson) {
+        try {
+            const width = 700, height = 600;
+            const projection = d3.geoMercator().fitSize([width, height], geojson);
+            const pathGen = d3.geoPath().projection(projection);
+
+            geojson.features.forEach(feat => {
+                // Some GeoJSONs use different property keys for the display name. Try common variants.
+                const name = (feat.properties && (feat.properties.NAME || feat.properties.name || feat.properties.name_en || feat.properties.NAME_1)) || feat.id || 'Unknown';
+                const d = pathGen(feat);
+
+                if (!d) return;
+
+                if (currentLevel === 1) {
+                    // provinces: create group similar to previous logic
+                    const tint = tintMap[name] || '#d09a74';
+                    const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                    const base = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    base.setAttribute('d', d);
+                    base.setAttribute('fill', tint);
+                    base.setAttribute('class', 'map-region');
+                    base.setAttribute('data-region', name);
+                    group.appendChild(base);
+                    // borders
+                    const inner = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    inner.setAttribute('d', d);
+                    inner.setAttribute('fill', 'none');
+                    inner.setAttribute('stroke', '#fff');
+                    inner.setAttribute('stroke-width', '0.9');
+                    inner.setAttribute('pointer-events', 'none');
+                    group.appendChild(inner);
+                    // If this is the currently marked province (asking for province), highlight it
+                    try {
+                        const askingForProvince = currentLevel === 1 && askedQuestions[currentQuestionIndex] === 'province';
+                        if (askingForProvince && currentQuestion && normalizeAnswer(name) === normalizeAnswer(currentQuestion.name)) {
+                            // add highlighted class so CSS can render it black
+                            base.classList.add('highlighted');
+                            // make the inner border more visible on dark fill
+                            inner.setAttribute('stroke', '#222');
+                            inner.setAttribute('stroke-width', '1.2');
+                        }
+                    } catch (e) {
+                        // ignore
+                    }
+                    mapSvg.appendChild(group);
+                } else {
+                    // waterways: simple stroke
+                    const w = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    w.setAttribute('d', d);
+                    w.setAttribute('class', 'map-waterway');
+                    w.setAttribute('stroke', 'url(#waterGradient)');
+                    w.setAttribute('stroke-width', '6');
+                    w.setAttribute('fill', 'none');
+                    mapSvg.appendChild(w);
+                }
+            });
+
+        } catch (err) {
+            // fallback below
+            renderFallback(paths, tintMap, mapSvg, currentLevel, currentQuestion);
+        }
+    }
+    // --- end geojson attempt ---
+
+    function renderFallback(paths, tintMap, mapSvg, currentLevel, currentQuestion) {
+        Object.keys(paths).forEach(regionName => {
+            const pathData = paths[regionName];
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            
+            path.setAttribute('d', pathData);
+            path.setAttribute('data-region', regionName);
+            
+            // Different styling for waterways vs provinces
+            if (currentLevel === 2) {
+                // Waterways: drawn as lines with gradient stroke and glow
+                path.setAttribute('class', 'map-waterway');
+                path.setAttribute('fill', 'none');
+                path.setAttribute('stroke', 'url(#waterGradient)');
+                path.setAttribute('stroke-width', '8');
+                path.setAttribute('filter', 'url(#waterGlow)');
+                path.setAttribute('stroke-linecap', 'round');
+                path.setAttribute('stroke-linejoin', 'round');
+            } else {
+                // Provinces: use a group with a patterned base + subtle color tint overlay
+                const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+                // determine tint first
+                const tint = tintMap[regionName] || '#d09a74';
+
+                const base = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                base.setAttribute('d', pathData);
+                base.setAttribute('class', 'map-region');
+                // Use a solid tint fill for clean map appearance
+                base.setAttribute('fill', tint);
+                base.setAttribute('stroke', 'none');
+                base.setAttribute('stroke-width', '0');
+
+                const overlay = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                overlay.setAttribute('d', pathData);
+                overlay.setAttribute('class', 'map-region-overlay');
+                overlay.setAttribute('fill', tint);
+                overlay.setAttribute('opacity', '0.06');
+
+                // Inner white border for province separations (like administrative borders)
+                const innerBorder = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                innerBorder.setAttribute('d', pathData);
+                innerBorder.setAttribute('fill', 'none');
+                innerBorder.setAttribute('stroke', '#ffffff');
+                innerBorder.setAttribute('stroke-width', '1');
+                innerBorder.setAttribute('stroke-linejoin', 'round');
+                innerBorder.setAttribute('pointer-events', 'none');
+
+                // Outer subtle outline to define province edges
+                const outerBorder = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                outerBorder.setAttribute('d', pathData);
+                outerBorder.setAttribute('fill', 'none');
+                outerBorder.setAttribute('stroke', '#8a6a57');
+                outerBorder.setAttribute('stroke-width', '1.2');
+                outerBorder.setAttribute('stroke-linejoin', 'round');
+                outerBorder.setAttribute('pointer-events', 'none');
+
+                group.appendChild(base);
+                group.appendChild(overlay);
+                group.appendChild(innerBorder);
+                group.appendChild(outerBorder);
+
+                // For interactivity, attach data-region to the base path
+                base.setAttribute('data-region', regionName);
+
+                // Append the group instead of the single path
+                mapSvg.appendChild(group);
+                
+                // Add a centered label for the province (try-catch in case bbox isn't ready)
+                try {
+                    const bbox = base.getBBox();
+                    const cx = bbox.x + bbox.width / 2;
+                    const cy = bbox.y + bbox.height / 2;
+                    const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    label.setAttribute('x', cx);
+                    label.setAttribute('y', cy);
+                    label.setAttribute('text-anchor', 'middle');
+                    label.setAttribute('class', 'province-label');
+                    label.textContent = regionName.replace('Noord-', 'N. ').replace('Zuid-', 'Z. ');
+                    // If this is the currently marked province and asking for province, mark it highlighted
+                    try {
+                        const askingForProvince = currentLevel === 1 && askedQuestions[currentQuestionIndex] === 'province';
+                        if (askingForProvince && currentQuestion && normalizeAnswer(regionName) === normalizeAnswer(currentQuestion.name)) {
+                            base.classList.add('highlighted');
+                            label.classList.add('highlighted');
+                        }
+                    } catch (e) {}
+
+                    mapSvg.appendChild(label);
+                } catch (err) {
+                    // if getBBox fails (rare), skip label
+                }
+            }
+
+        });
+    }
+
+    // helper to set the question text (used by both geojson and fallback branches)
+    function setQuestionText() {
+        const questionElement = document.getElementById('question');
         if (currentLevel === 1) {
             const askingForProvince = askedQuestions[currentQuestionIndex] === 'province';
-            if (regionName === currentQuestion.name) {
-                path.classList.add('highlighted');
+            if (askingForProvince) {
+                questionElement.textContent = 'Wat is de naam van de gemarkeerde provincie?';
+            } else {
+                questionElement.textContent = `Wat is de hoofdstad van ${currentQuestion.name}?`;
+                // Don't highlight when asking for capital
+                document.querySelectorAll('.map-region.highlighted').forEach(el => {
+                    el.classList.remove('highlighted');
+                });
             }
         } else {
-            if (regionName === currentQuestion.name) {
-                path.classList.add('highlighted');
-            }
+            questionElement.textContent = 'Wat is de naam van het gemarkeerde water?';
         }
-        
-        mapSvg.appendChild(path);
-    });
-    
-    // Update question text
-    const questionElement = document.getElementById('question');
-    if (currentLevel === 1) {
-        const askingForProvince = askedQuestions[currentQuestionIndex] === 'province';
-        if (askingForProvince) {
-            questionElement.textContent = 'Wat is de naam van de gemarkeerde provincie?';
-        } else {
-            questionElement.textContent = `Wat is de hoofdstad van ${currentQuestion.name}?`;
-            // Don't highlight when asking for capital
-            document.querySelectorAll('.map-region.highlighted').forEach(el => {
-                el.classList.remove('highlighted');
-            });
-        }
-    } else {
-        questionElement.textContent = 'Wat is de naam van het gemarkeerde water?';
     }
+    
 }
 
 // Handle Enter key in input field

@@ -36,6 +36,38 @@
 
             <div class="map-container">
                 <svg id="map" viewBox="0 0 700 600">
+                    <defs>
+                        <!-- Land gradient used as base for patterns -->
+                        <linearGradient id="landGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#c85a3a" />
+                            <stop offset="60%" stop-color="#e0a56f" />
+                        </linearGradient>
+
+                        <!-- Base pattern (fallback) using external texture overlay -->
+                        <pattern id="landPatternBase" patternUnits="userSpaceOnUse" width="700" height="600">
+                            <rect width="700" height="600" fill="url(#landGradient)" />
+                            <image href="assets/land-texture.svg" width="700" height="600" opacity="0.06" preserveAspectRatio="xMidYMid slice" />
+                        </pattern>
+
+                        <!-- Water gradient and glow -->
+                        <linearGradient id="waterGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#3b82c4" />
+                            <stop offset="100%" stop-color="#176fb0" />
+                        </linearGradient>
+
+                        <filter id="waterGlow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="6" result="blur" />
+                            <feMerge>
+                                <feMergeNode in="blur" />
+                                <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                        </filter>
+
+                        <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.18" />
+                        </filter>
+                    </defs>
+
                     <!-- Map will be drawn here -->
                 </svg>
             </div>
@@ -59,6 +91,7 @@
         </footer>
     </div>
 
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="game.js"></script>
 </body>
 </html>

@@ -1,3 +1,34 @@
+Topotest — local development
+
+This is a small static web app (HTML/CSS/JS) that draws a Netherlands map and runs a geography quiz.
+
+Why serve over HTTP
+-------------------
+Modern browsers block fetch requests to local files when the page is opened via file://. To let the app fetch `assets/provinces.geojson` from the `assets/` folder, serve the project over HTTP.
+
+Quick local server (Python 3)
+-----------------------------
+Run from the project root (`/Users/razr/workspace/Topotest`):
+
+```bash
+# from the project folder
+python3 -m http.server 8000
+# then open http://localhost:8000 in your browser
+```
+
+Alternatives
+------------
+- Embed GeoJSON into `game.js`: safer for offline usage, but increases the JS bundle size.
+- Overwrite `assets/provinces.geojson` with a detailed FeatureCollection: if you want full realistic shapes in the repo, I can add the detailed GeoJSON file (it will be large).
+
+What to test
+------------
+1. Start the local server above.
+2. Open http://localhost:8000 in a browser.
+3. Start the game and confirm the map loads.
+4. Confirm the marked (target) province fills black and its label is white.
+
+If anything breaks or you want me to write the full detailed GeoJSON into `assets/provinces.geojson` or embed it into `game.js`, tell me which option you prefer and I'll do it.
 # Topotest
 Een educatief topografie spel voor kinderen om de Nederlandse geografie te leren.
 

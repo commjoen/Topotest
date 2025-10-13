@@ -99,7 +99,7 @@ header h1 {
 }
 
 .map-container {
-    background: #e8f4f8;
+    background: linear-gradient(180deg, #f4f6f8 0%, #eef3f6 100%);
     border-radius: 10px;
     padding: 20px;
     margin-bottom: 30px;
@@ -115,42 +115,62 @@ header h1 {
 }
 
 .map-region {
-    fill: #b8d4e8;
-    stroke: #2c3e50;
-    stroke-width: 2;
-    transition: all 0.3s ease;
-    cursor: pointer;
+    /* land: subtle earthy palette; actual fill comes from SVG gradient */
     stroke-linejoin: round;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+    cursor: pointer;
+    opacity: 0.98;
 }
 
 .map-region:hover {
-    fill: #90c4e0;
+    transform: translateY(-4px);
+    opacity: 1;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.08));
 }
 
 .map-region.highlighted {
-    fill: #ff6b6b;
-    animation: pulse 1.5s infinite;
+    /* marked province: solid black for strong contrast */
+    fill: #000 !important;
+    stroke: #222 !important;
+    stroke-width: 1.5 !important;
+}
+
+.map-region-overlay {
+    mix-blend-mode: multiply;
+}
+
+.province-label {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 10px;
+    fill: #2b2b2b;
+    pointer-events: none;
+    text-shadow: 0 1px 0 #fff;
+    opacity: 0.9;
+}
+
+/* label style when its province is highlighted */
+.province-label.highlighted {
+    fill: #fff;
+    font-weight: 700;
+    text-shadow: none;
 }
 
 .map-waterway {
     fill: none;
-    stroke: #4A90E2;
-    stroke-width: 8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    transition: all 0.3s ease;
+    transition: stroke-width 0.25s ease, opacity 0.25s ease;
     cursor: pointer;
+    opacity: 0.95;
 }
 
 .map-waterway:hover {
-    stroke: #357ABD;
+    opacity: 1;
     stroke-width: 10;
 }
 
 .map-waterway.highlighted {
-    stroke: #ff6b6b;
-    stroke-width: 12;
-    animation: pulseWaterway 1.5s infinite;
+    stroke: #ff8a7a !important;
+    stroke-width: 14 !important;
+    filter: drop-shadow(0 6px 10px rgba(255, 138, 122, 0.15));
 }
 
 @keyframes pulse {
@@ -160,6 +180,11 @@ header h1 {
     50% {
         fill: #ff4444;
     }
+}
+
+@keyframes landPulse {
+    0%, 100% { fill: #ffb4a2; }
+    50% { fill: #ffa08b; }
 }
 
 @keyframes pulseWaterway {
