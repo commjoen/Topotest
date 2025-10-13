@@ -368,24 +368,6 @@ function drawMap() {
         }
         
         mapSvg.appendChild(path);
-        
-        // Add label for non-highlighted regions
-        if (!path.classList.contains('highlighted')) {
-            const labelPos = labelPositions[regionName];
-            if (labelPos) {
-                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                text.setAttribute('x', labelPos.x);
-                text.setAttribute('y', labelPos.y);
-                text.setAttribute('text-anchor', 'middle');
-                text.setAttribute('dominant-baseline', 'middle');
-                text.setAttribute('font-size', '11');
-                text.setAttribute('fill', '#2c3e50');
-                text.setAttribute('pointer-events', 'none');
-                text.setAttribute('font-weight', 'bold');
-                text.textContent = regionName;
-                mapSvg.appendChild(text);
-            }
-        }
     });
     
     // Update question text
