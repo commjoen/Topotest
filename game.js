@@ -55,22 +55,6 @@ const provincePaths = {
     "Limburg": "M 475,395 L 495,390 L 515,395 L 530,410 L 540,435 L 545,465 L 545,495 L 540,525 L 530,550 L 515,565 L 495,570 L 480,565 L 465,550 L 455,525 L 450,495 L 450,465 L 455,435 L 465,410 Z"
 };
 
-// Label positions for provinces (center of each province)
-const provinceLabelPositions = {
-    "Groningen": { x: 585, y: 65 },
-    "Friesland": { x: 425, y: 70 },
-    "Drenthe": { x: 560, y: 135 },
-    "Overijssel": { x: 505, y: 165 },
-    "Flevoland": { x: 395, y: 175 },
-    "Gelderland": { x: 515, y: 305 },
-    "Utrecht": { x: 385, y: 268 },
-    "Noord-Holland": { x: 270, y: 155 },
-    "Zuid-Holland": { x: 245, y: 275 },
-    "Zeeland": { x: 150, y: 385 },
-    "Noord-Brabant": { x: 345, y: 380 },
-    "Limburg": { x: 495, y: 480 }
-};
-
 // SVG map paths for waterways (geographical shapes)
 const waterwayPaths = {
     "IJssel": "M 505,180 L 510,200 L 515,220 L 520,245 L 525,270 L 530,295 L 532,315",
@@ -85,22 +69,6 @@ const waterwayPaths = {
     "Markermeer": "M 360,160 L 375,158 L 390,160 L 400,165 L 405,175 L 400,185 L 390,190 L 375,192 L 360,190 L 352,182 L 350,172 Z",
     "Nieuwe Waterweg": "M 185,290 L 210,292 L 235,294 L 260,295",
     "Lek": "M 305,305 L 330,307 L 355,309 L 380,310 L 405,311"
-};
-
-// Label positions for waterways
-const waterwayLabelPositions = {
-    "IJssel": { x: 520, y: 245 },
-    "Maas": { x: 490, y: 465 },
-    "Waal": { x: 465, y: 318 },
-    "Neder-Rijn": { x: 415, y: 298 },
-    "Amsterdam-Rijnkanaal": { x: 365, y: 235 },
-    "Waddenzee": { x: 440, y: 58 },
-    "Oosterschelde": { x: 190, y: 370 },
-    "Westerschelde": { x: 135, y: 398 },
-    "IJsselmeer": { x: 355, y: 160 },
-    "Markermeer": { x: 380, y: 175 },
-    "Nieuwe Waterweg": { x: 225, y: 293 },
-    "Lek": { x: 355, y: 308 }
 };
 
 // Initialize the game
@@ -327,7 +295,6 @@ function drawMap() {
     if (currentQuestionIndex >= shuffledData.length) return;
     
     const paths = currentLevel === 1 ? provincePaths : waterwayPaths;
-    const labelPositions = currentLevel === 1 ? provinceLabelPositions : waterwayLabelPositions;
     const currentQuestion = shuffledData[currentQuestionIndex];
     
     // For level 1, randomly decide whether to ask for province or capital
