@@ -223,42 +223,43 @@ describe('Topotest Game Tests', () => {
   });
 
   describe('LocalStorage High Scores', () => {
+    // Helper functions that mirror the actual implementation
+    const getHighScores = () => {
+      try {
+        const scores = localStorage.getItem('topotest-highscores');
+        return scores ? JSON.parse(scores) : { level1: 0, level2: 0 };
+      } catch (e) {
+        return { level1: 0, level2: 0 };
+      }
+    };
+
+    const saveHighScore = (level, score) => {
+      try {
+        const scores = localStorage.getItem('topotest-highscores');
+        const highScores = scores ? JSON.parse(scores) : { level1: 0, level2: 0 };
+        const key = `level${level}`;
+        if (score > highScores[key]) {
+          highScores[key] = score;
+          localStorage.setItem('topotest-highscores', JSON.stringify(highScores));
+          return true;
+        }
+        return false;
+      } catch (e) {
+        return false;
+      }
+    };
+
     beforeEach(() => {
       // Clear localStorage before each test
       localStorage.clear();
     });
 
     test('should initialize with zero scores', () => {
-      const getHighScores = () => {
-        try {
-          const scores = localStorage.getItem('topotest-highscores');
-          return scores ? JSON.parse(scores) : { level1: 0, level2: 0 };
-        } catch (e) {
-          return { level1: 0, level2: 0 };
-        }
-      };
-
       const scores = getHighScores();
       expect(scores).toEqual({ level1: 0, level2: 0 });
     });
 
     test('should save high score for level 1', () => {
-      const saveHighScore = (level, score) => {
-        try {
-          const scores = localStorage.getItem('topotest-highscores');
-          const highScores = scores ? JSON.parse(scores) : { level1: 0, level2: 0 };
-          const key = `level${level}`;
-          if (score > highScores[key]) {
-            highScores[key] = score;
-            localStorage.setItem('topotest-highscores', JSON.stringify(highScores));
-            return true;
-          }
-          return false;
-        } catch (e) {
-          return false;
-        }
-      };
-
       const isNewHighScore = saveHighScore(1, 10);
       expect(isNewHighScore).toBe(true);
       
@@ -267,22 +268,6 @@ describe('Topotest Game Tests', () => {
     });
 
     test('should not save score if it is lower than current high score', () => {
-      const saveHighScore = (level, score) => {
-        try {
-          const scores = localStorage.getItem('topotest-highscores');
-          const highScores = scores ? JSON.parse(scores) : { level1: 0, level2: 0 };
-          const key = `level${level}`;
-          if (score > highScores[key]) {
-            highScores[key] = score;
-            localStorage.setItem('topotest-highscores', JSON.stringify(highScores));
-            return true;
-          }
-          return false;
-        } catch (e) {
-          return false;
-        }
-      };
-
       saveHighScore(1, 10);
       const isNewHighScore = saveHighScore(1, 5);
       expect(isNewHighScore).toBe(false);
@@ -292,22 +277,6 @@ describe('Topotest Game Tests', () => {
     });
 
     test('should save high scores for different levels independently', () => {
-      const saveHighScore = (level, score) => {
-        try {
-          const scores = localStorage.getItem('topotest-highscores');
-          const highScores = scores ? JSON.parse(scores) : { level1: 0, level2: 0 };
-          const key = `level${level}`;
-          if (score > highScores[key]) {
-            highScores[key] = score;
-            localStorage.setItem('topotest-highscores', JSON.stringify(highScores));
-            return true;
-          }
-          return false;
-        } catch (e) {
-          return false;
-        }
-      };
-
       saveHighScore(1, 10);
       saveHighScore(2, 8);
       
