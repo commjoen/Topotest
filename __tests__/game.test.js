@@ -308,7 +308,7 @@ describe('Topotest Game Tests', () => {
       if (value.toLowerCase() === 'all') {
         return 'all';
       }
-      const num = parseInt(value);
+      const num = parseInt(value, 10);
       if (!isNaN(num) && num > 0) {
         return String(num);
       }
