@@ -7,13 +7,7 @@ describe('Topotest Game Tests', () => {
     beforeEach(() => {
       // Set up a minimal DOM
       document.body.innerHTML = `
-        <select id="num-questions">
-          <option value="all">Alle</option>
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="15">15</option>
-          <option value="20">20</option>
-        </select>
+        <input type="text" id="num-questions" value="all">
         <input type="checkbox" id="enable-timer">
         <span id="timer-display" style="display: none;">
           Tijd: <span id="timer-value">0:00</span>
@@ -23,13 +17,11 @@ describe('Topotest Game Tests', () => {
       `;
     });
 
-    test('question limit select should exist and have correct options', () => {
-      const select = document.getElementById('num-questions');
-      expect(select).toBeTruthy();
-      expect(select.options.length).toBe(5);
-      expect(select.options[0].value).toBe('all');
-      expect(select.options[1].value).toBe('5');
-      expect(select.options[2].value).toBe('10');
+    test('question limit input should exist and have default value', () => {
+      const input = document.getElementById('num-questions');
+      expect(input).toBeTruthy();
+      expect(input.type).toBe('text');
+      expect(input.value).toBe('all');
     });
 
     test('timer checkbox should exist and be unchecked by default', () => {
@@ -46,9 +38,15 @@ describe('Topotest Game Tests', () => {
     });
 
     test('should be able to change question limit', () => {
-      const select = document.getElementById('num-questions');
-      select.value = '5';
-      expect(select.value).toBe('5');
+      const input = document.getElementById('num-questions');
+      input.value = '5';
+      expect(input.value).toBe('5');
+    });
+
+    test('should be able to set custom question limit', () => {
+      const input = document.getElementById('num-questions');
+      input.value = '25';
+      expect(input.value).toBe('25');
     });
 
     test('should be able to enable timer', () => {
@@ -283,6 +281,60 @@ describe('Topotest Game Tests', () => {
       const savedScores = JSON.parse(localStorage.getItem('topotest-highscores'));
       expect(savedScores.level1).toBe(10);
       expect(savedScores.level2).toBe(8);
+    });
+  });
+
+  describe('LocalStorage Question Limit', () => {
+    // Helper functions that mirror the actual implementation
+    const getQuestionLimit = () => {
+      try {
+        const limit = localStorage.getItem('topotest-question-limit');
+        return limit !== null ? limit : 'all';
+      } catch (e) {
+        return 'all';
+      }
+    };
+
+    const saveQuestionLimit = (limit) => {
+      try {
+        localStorage.setItem('topotest-question-limit', limit);
+      } catch (e) {
+        // Ignore errors
+      }
+    };
+
+    beforeEach(() => {
+      // Clear localStorage before each test
+      localStorage.clear();
+    });
+
+    test('should initialize with "all" as default', () => {
+      const limit = getQuestionLimit();
+      expect(limit).toBe('all');
+    });
+
+    test('should save question limit to localStorage', () => {
+      saveQuestionLimit('10');
+      const savedLimit = localStorage.getItem('topotest-question-limit');
+      expect(savedLimit).toBe('10');
+    });
+
+    test('should retrieve saved question limit', () => {
+      saveQuestionLimit('25');
+      const limit = getQuestionLimit();
+      expect(limit).toBe('25');
+    });
+
+    test('should handle custom numeric values', () => {
+      saveQuestionLimit('42');
+      const limit = getQuestionLimit();
+      expect(limit).toBe('42');
+    });
+
+    test('should handle "all" value', () => {
+      saveQuestionLimit('all');
+      const limit = getQuestionLimit();
+      expect(limit).toBe('all');
     });
   });
 });

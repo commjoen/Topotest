@@ -78,6 +78,24 @@ function displayHighScore() {
     }
 }
 
+// LocalStorage functions for question limit
+function getQuestionLimit() {
+    try {
+        const limit = localStorage.getItem('topotest-question-limit');
+        return limit !== null ? limit : 'all';
+    } catch (e) {
+        return 'all';
+    }
+}
+
+function saveQuestionLimit(limit) {
+    try {
+        localStorage.setItem('topotest-question-limit', limit);
+    } catch (e) {
+        // Ignore errors
+    }
+}
+
 // SVG map paths for provinces (geographically accurate shapes based on real Netherlands geography)
 const provincePaths = {
     "Groningen": "M 545,20 L 560,18 L 580,17 L 600,18 L 620,20 L 638,24 L 652,30 L 665,38 L 675,48 L 682,60 L 686,72 L 686,84 L 682,96 L 674,106 L 663,114 L 650,119 L 635,121 L 620,120 L 605,116 L 592,112 L 580,110 L 568,112 L 558,117 L 550,123 L 544,127 L 540,125 L 538,118 L 536,108 L 535,96 L 535,84 L 536,72 L 538,60 L 540,48 L 542,36 L 544,28 Z",
@@ -148,6 +166,11 @@ function init() {
     updateStats();
     displayHighScore();
     
+    // Load question limit from localStorage
+    questionLimit = getQuestionLimit();
+    const numQuestionsInput = document.getElementById('num-questions');
+    numQuestionsInput.value = questionLimit;
+    
     // Add event listeners for settings
     const timerCheckbox = document.getElementById('enable-timer');
     timerCheckbox.addEventListener('change', function() {
@@ -155,9 +178,14 @@ function init() {
         updateTimerDisplay();
     });
     
-    const numQuestionsSelect = document.getElementById('num-questions');
-    numQuestionsSelect.addEventListener('change', function() {
+    numQuestionsInput.addEventListener('change', function() {
         questionLimit = this.value;
+        saveQuestionLimit(questionLimit);
+    });
+    
+    numQuestionsInput.addEventListener('blur', function() {
+        questionLimit = this.value;
+        saveQuestionLimit(questionLimit);
     });
 }
 
