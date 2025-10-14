@@ -101,13 +101,19 @@ header h1 {
     color: #555;
 }
 
-.setting select {
+.setting select,
+.setting input[type="text"] {
     padding: 6px 12px;
     border: 2px solid #ddd;
     border-radius: 6px;
     font-size: 1em;
     background: white;
     cursor: pointer;
+}
+
+.setting input[type="text"] {
+    width: 100px;
+    cursor: text;
 }
 
 .setting input[type="checkbox"] {
