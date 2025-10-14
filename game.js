@@ -27,7 +27,8 @@ const level2Data = [
     { name: "IJsselmeer", type: "lake" },
     { name: "Markermeer", type: "lake" },
     { name: "Nieuwe Waterweg", type: "waterway" },
-    { name: "Lek", type: "river" }
+    { name: "Lek", type: "river" },
+    { name: "Noordzeekanaal", type: "canal" }
 ];
 
 // Game state
@@ -73,7 +74,8 @@ const waterPolygonPaths = {
     "Waddenzee": "M 35.9,107.1 L 161.5,64.3 L 341.0,21.4 L 556.4,21.4 L 664.1,64.3 L 628.2,107.1 L 484.6,117.9 L 215.4,117.9 L 35.9,107.1 Z",
     "Oosterschelde": "M 89.7,407.1 L 143.6,396.4 L 179.5,385.7 L 215.4,385.7 L 233.3,396.4 L 197.4,407.1 L 89.7,407.1 Z",
     "Westerschelde": "M 35.9,492.9 L 107.7,471.4 L 161.5,450.0 L 215.4,439.3 L 233.3,450.0 L 143.6,482.1 L 35.9,492.9 Z",
-    "Lek": "M 320,308 L 350,309 L 380,310 L 410,311 L 440,312 L 440,324 L 410,323 L 380,322 L 350,321 L 320,320 Z"
+    "Lek": "M 320,308 L 350,309 L 380,310 L 410,311 L 440,312 L 440,324 L 410,323 L 380,322 L 350,321 L 320,320 Z",
+    "Noordzeekanaal": "M 170,215 L 220,217 L 270,219 L 320,220 L 320,232 L 270,230 L 220,228 L 170,226 Z"
 };
 
 // Use the simplified embedded provinces GeoJSON (kept small for offline/file:// use)
