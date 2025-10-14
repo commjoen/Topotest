@@ -27,7 +27,8 @@ const level2Data = [
     { name: "IJsselmeer", type: "lake" },
     { name: "Markermeer", type: "lake" },
     { name: "Nieuwe Waterweg", type: "waterway" },
-    { name: "Lek", type: "river" }
+    { name: "Lek", type: "river" },
+    { name: "Noordzeekanaal", type: "canal" }
 ];
 
 // Game state
@@ -56,19 +57,25 @@ const provincePaths = {
 };
 
 // SVG map paths for waterways (more geographically accurate)
+// These are rivers and canals rendered as lines
 const waterwayPaths = {
     "IJssel": "M 515,214 L 522,229 L 528,246 L 532,264 L 535,284 L 538,304 L 540,324 L 542,344",
     "Maas": "M 495,398 L 500,418 L 505,441 L 508,464 L 510,486 L 512,508 L 513,531 L 515,554 L 518,576",
     "Waal": "M 430,308 L 460,311 L 490,315 L 520,317 L 550,319 L 580,320",
     "Neder-Rijn": "M 380,296 L 408,298 L 435,300 L 462,302 L 488,302",
     "Amsterdam-Rijnkanaal": "M 310,199 L 322,214 L 335,231 L 348,249 L 360,268 L 372,287",
-    "Waddenzee": "M 200,22 L 300,19 L 400,21 L 500,24 L 600,28 L 680,34 L 685,49 L 600,45 L 500,41 L 400,38 L 300,34 L 200,32 Z",
-    "Oosterschelde": "M 140,349 L 170,351 L 200,354 L 228,356 L 255,358",
-    "Westerschelde": "M 70,371 L 100,374 L 130,376 L 160,379 L 188,380",
-    "IJsselmeer": "M 290,105 L 325,104 L 355,106 L 380,114 L 395,128 L 402,144 L 400,161 L 390,176 L 372,186 L 350,191 L 325,194 L 300,191 L 280,184 L 268,171 L 262,156 L 262,141 L 268,128 L 278,116 Z",
-    "Markermeer": "M 355,146 L 380,145 L 400,148 L 415,158 L 422,171 L 420,186 L 410,199 L 395,206 L 375,210 L 358,208 L 345,201 L 338,189 L 335,176 L 338,164 L 348,154 Z",
-    "Nieuwe Waterweg": "M 160,285 L 190,287 L 220,290 L 250,291 L 280,292",
-    "Lek": "M 320,314 L 350,315 L 380,316 L 410,317 L 440,318"
+    "Nieuwe Waterweg": "M 160,285 L 190,287 L 220,290 L 250,291 L 280,292"
+};
+
+// Embedded water polygon paths (for lakes, seas, estuaries) - rendered as filled shapes
+const waterPolygonPaths = {
+    "IJsselmeer": "M 287.2,150.0 L 323.1,107.1 L 376.9,64.3 L 466.7,53.6 L 520.5,75.0 L 484.6,117.9 L 412.8,139.3 L 341.0,154.3 L 287.2,150.0 Z",
+    "Markermeer": "M 305.1,246.4 L 332.1,225.0 L 376.9,203.6 L 412.8,214.3 L 376.9,235.7 L 323.1,246.4 L 305.1,246.4 Z",
+    "Waddenzee": "M 35.9,107.1 L 161.5,64.3 L 341.0,21.4 L 556.4,21.4 L 664.1,64.3 L 628.2,107.1 L 484.6,117.9 L 215.4,117.9 L 35.9,107.1 Z",
+    "Oosterschelde": "M 89.7,407.1 L 143.6,396.4 L 179.5,385.7 L 215.4,385.7 L 233.3,396.4 L 197.4,407.1 L 89.7,407.1 Z",
+    "Westerschelde": "M 35.9,492.9 L 107.7,471.4 L 161.5,450.0 L 215.4,439.3 L 233.3,450.0 L 143.6,482.1 L 35.9,492.9 Z",
+    "Lek": "M 320,308 L 350,309 L 380,310 L 410,311 L 440,312 L 440,324 L 410,323 L 380,322 L 350,321 L 320,320 Z",
+    "Noordzeekanaal": "M 170,215 L 220,217 L 270,219 L 320,220 L 320,232 L 270,230 L 220,228 L 170,226 Z"
 };
 
 // Use the simplified embedded provinces GeoJSON (kept small for offline/file:// use)
@@ -335,9 +342,9 @@ function drawMap() {
     const paths = currentLevel === 1 ? provincePaths : waterwayPaths;
     const currentQuestion = shuffledData[currentQuestionIndex];
 
-    // If drawing waterways (level 2), skip GeoJSON fetch and render using built-in paths
+    // If drawing waterways (level 2), render both polygon water bodies and river lines
     if (currentLevel === 2) {
-        renderFallback(paths, null, mapSvg, currentLevel, currentQuestion);
+        renderWatersEmbedded();
         setQuestionText();
         return;
     }
@@ -389,6 +396,58 @@ function drawMap() {
             // fall through to the old vector fallback
         }
     })();
+
+    // Render helper for water bodies (Level 2) using embedded paths
+    function renderWatersEmbedded() {
+        // First, render water body polygons (lakes, seas, estuaries) as filled shapes
+        Object.keys(waterPolygonPaths).forEach(waterName => {
+            const pathData = waterPolygonPaths[waterName];
+            
+            // Create water body polygon with fill
+            const waterBody = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            waterBody.setAttribute('d', pathData);
+            waterBody.setAttribute('class', 'map-waterbody');
+            waterBody.setAttribute('fill', 'url(#waterGradient)');
+            waterBody.setAttribute('opacity', '0.85');
+            waterBody.setAttribute('data-region', waterName);
+            
+            // Add shore outline for better visibility
+            const shore = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            shore.setAttribute('d', pathData);
+            shore.setAttribute('class', 'map-waterbody-shore');
+            
+            mapSvg.appendChild(waterBody);
+            mapSvg.appendChild(shore);
+            
+            // Highlight if this is the current question
+            if (currentQuestion && normalizeAnswer(waterName) === normalizeAnswer(currentQuestion.name)) {
+                waterBody.classList.add('highlighted');
+                waterBody.setAttribute('opacity', '1');
+            }
+        });
+
+        // Render rivers and canals as lines
+        Object.keys(waterwayPaths).forEach(riverName => {
+            const pathData = waterwayPaths[riverName];
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', pathData);
+            path.setAttribute('class', 'map-waterway');
+            path.setAttribute('fill', 'none');
+            path.setAttribute('stroke', 'url(#waterGradient)');
+            path.setAttribute('stroke-width', '8');
+            path.setAttribute('filter', 'url(#waterGlow)');
+            path.setAttribute('stroke-linecap', 'round');
+            path.setAttribute('stroke-linejoin', 'round');
+            path.setAttribute('data-region', riverName);
+            
+            mapSvg.appendChild(path);
+            
+            // Highlight if this is the current question
+            if (currentQuestion && normalizeAnswer(riverName) === normalizeAnswer(currentQuestion.name)) {
+                path.classList.add('highlighted');
+            }
+        });
+    }
 
     // Render helper for GeoJSON via D3
     function renderGeoJSON(geojson) {
