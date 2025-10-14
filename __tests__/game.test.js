@@ -303,6 +303,19 @@ describe('Topotest Game Tests', () => {
       }
     };
 
+    const validateQuestionLimit = (value) => {
+      // Allow "all" or positive integers
+      if (value.toLowerCase() === 'all') {
+        return 'all';
+      }
+      const num = parseInt(value);
+      if (!isNaN(num) && num > 0) {
+        return String(num);
+      }
+      // Invalid input, return default
+      return 'all';
+    };
+
     beforeEach(() => {
       // Clear localStorage before each test
       localStorage.clear();
@@ -335,6 +348,38 @@ describe('Topotest Game Tests', () => {
       saveQuestionLimit('all');
       const limit = getQuestionLimit();
       expect(limit).toBe('all');
+    });
+
+    test('should validate "all" case-insensitively', () => {
+      expect(validateQuestionLimit('all')).toBe('all');
+      expect(validateQuestionLimit('ALL')).toBe('all');
+      expect(validateQuestionLimit('All')).toBe('all');
+    });
+
+    test('should validate positive integers', () => {
+      expect(validateQuestionLimit('5')).toBe('5');
+      expect(validateQuestionLimit('10')).toBe('10');
+      expect(validateQuestionLimit('100')).toBe('100');
+    });
+
+    test('should reject negative numbers', () => {
+      expect(validateQuestionLimit('-5')).toBe('all');
+      expect(validateQuestionLimit('-10')).toBe('all');
+    });
+
+    test('should reject zero', () => {
+      expect(validateQuestionLimit('0')).toBe('all');
+    });
+
+    test('should reject invalid strings', () => {
+      expect(validateQuestionLimit('abc')).toBe('all');
+      expect(validateQuestionLimit('test')).toBe('all');
+      expect(validateQuestionLimit('')).toBe('all');
+    });
+
+    test('should reject special characters', () => {
+      expect(validateQuestionLimit('5.5')).toBe('5');
+      expect(validateQuestionLimit('10.9')).toBe('10');
     });
   });
 });

@@ -96,6 +96,19 @@ function saveQuestionLimit(limit) {
     }
 }
 
+function validateQuestionLimit(value) {
+    // Allow "all" or positive integers
+    if (value.toLowerCase() === 'all') {
+        return 'all';
+    }
+    const num = parseInt(value);
+    if (!isNaN(num) && num > 0) {
+        return String(num);
+    }
+    // Invalid input, return default
+    return 'all';
+}
+
 // SVG map paths for provinces (geographically accurate shapes based on real Netherlands geography)
 const provincePaths = {
     "Groningen": "M 545,20 L 560,18 L 580,17 L 600,18 L 620,20 L 638,24 L 652,30 L 665,38 L 675,48 L 682,60 L 686,72 L 686,84 L 682,96 L 674,106 L 663,114 L 650,119 L 635,121 L 620,120 L 605,116 L 592,112 L 580,110 L 568,112 L 558,117 L 550,123 L 544,127 L 540,125 L 538,118 L 536,108 L 535,96 L 535,84 L 536,72 L 538,60 L 540,48 L 542,36 L 544,28 Z",
@@ -179,12 +192,16 @@ function init() {
     });
     
     numQuestionsInput.addEventListener('change', function() {
-        questionLimit = this.value;
+        const validatedValue = validateQuestionLimit(this.value);
+        this.value = validatedValue;
+        questionLimit = validatedValue;
         saveQuestionLimit(questionLimit);
     });
     
     numQuestionsInput.addEventListener('blur', function() {
-        questionLimit = this.value;
+        const validatedValue = validateQuestionLimit(this.value);
+        this.value = validatedValue;
+        questionLimit = validatedValue;
         saveQuestionLimit(questionLimit);
     });
 }
