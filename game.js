@@ -44,6 +44,40 @@ let timerInterval = null;
 let timerSeconds = 0;
 let questionLimit = 'all';
 
+// LocalStorage functions for high scores
+function getHighScores() {
+    try {
+        const scores = localStorage.getItem('topotest-highscores');
+        return scores ? JSON.parse(scores) : { level1: 0, level2: 0 };
+    } catch (e) {
+        return { level1: 0, level2: 0 };
+    }
+}
+
+function saveHighScore(level, score) {
+    try {
+        const scores = getHighScores();
+        const key = `level${level}`;
+        if (score > scores[key]) {
+            scores[key] = score;
+            localStorage.setItem('topotest-highscores', JSON.stringify(scores));
+            return true; // New high score!
+        }
+        return false;
+    } catch (e) {
+        return false;
+    }
+}
+
+function displayHighScore() {
+    const scores = getHighScores();
+    const highScore = scores[`level${currentLevel}`];
+    const highScoreElement = document.getElementById('high-score');
+    if (highScoreElement) {
+        highScoreElement.textContent = highScore;
+    }
+}
+
 // SVG map paths for provinces (geographically accurate shapes based on real Netherlands geography)
 const provincePaths = {
     "Groningen": "M 545,20 L 560,18 L 580,17 L 600,18 L 620,20 L 638,24 L 652,30 L 665,38 L 675,48 L 682,60 L 686,72 L 686,84 L 682,96 L 674,106 L 663,114 L 650,119 L 635,121 L 620,120 L 605,116 L 592,112 L 580,110 L 568,112 L 558,117 L 550,123 L 544,127 L 540,125 L 538,118 L 536,108 L 535,96 L 535,84 L 536,72 L 538,60 L 540,48 L 542,36 L 544,28 Z",
@@ -112,6 +146,7 @@ const PROVINCE_ALIASES = {
 function init() {
     selectLevel(1);
     updateStats();
+    displayHighScore();
     
     // Add event listeners for settings
     const timerCheckbox = document.getElementById('enable-timer');
@@ -150,7 +185,7 @@ function updateTimerDisplay() {
     const timerDisplay = document.getElementById('timer-display');
     const timerValue = document.getElementById('timer-value');
     
-    if (timerEnabled && gameStarted) {
+    if (timerEnabled) {
         timerDisplay.style.display = 'inline';
         const minutes = Math.floor(timerSeconds / 60);
         const seconds = timerSeconds % 60;
@@ -192,6 +227,7 @@ function selectLevel(level) {
     document.getElementById('submit-btn').disabled = false;
     
     updateStats();
+    displayHighScore();
     drawMap();
 }
 
@@ -347,6 +383,10 @@ function endGame() {
     const totalQuestions = shuffledData.length;
     const percentage = Math.round((score / totalQuestions) * 100);
     
+    // Check and save high score
+    const isNewHighScore = saveHighScore(currentLevel, score);
+    displayHighScore();
+    
     const feedback = document.getElementById('feedback');
     feedback.className = 'feedback';
     feedback.style.background = '#e7f3ff';
@@ -359,6 +399,10 @@ function endGame() {
         const minutes = Math.floor(timerSeconds / 60);
         const seconds = timerSeconds % 60;
         message += ` | Tijd: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
+    
+    if (isNewHighScore) {
+        message += ' 🏆 Nieuw record!';
     }
     
     if (percentage === 100) {
