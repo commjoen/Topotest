@@ -63,8 +63,7 @@ const waterwayPaths = {
     "Waal": "M 430,308 L 460,311 L 490,315 L 520,317 L 550,319 L 580,320",
     "Neder-Rijn": "M 380,296 L 408,298 L 435,300 L 462,302 L 488,302",
     "Amsterdam-Rijnkanaal": "M 310,199 L 322,214 L 335,231 L 348,249 L 360,268 L 372,287",
-    "Nieuwe Waterweg": "M 160,285 L 190,287 L 220,290 L 250,291 L 280,292",
-    "Lek": "M 320,314 L 350,315 L 380,316 L 410,317 L 440,318"
+    "Nieuwe Waterweg": "M 160,285 L 190,287 L 220,290 L 250,291 L 280,292"
 };
 
 // Embedded water polygon paths (for lakes, seas, estuaries) - rendered as filled shapes
@@ -73,7 +72,8 @@ const waterPolygonPaths = {
     "Markermeer": "M 305.1,246.4 L 332.1,225.0 L 376.9,203.6 L 412.8,214.3 L 376.9,235.7 L 323.1,246.4 L 305.1,246.4 Z",
     "Waddenzee": "M 35.9,107.1 L 161.5,64.3 L 341.0,21.4 L 556.4,21.4 L 664.1,64.3 L 628.2,107.1 L 484.6,117.9 L 215.4,117.9 L 35.9,107.1 Z",
     "Oosterschelde": "M 89.7,407.1 L 143.6,396.4 L 179.5,385.7 L 215.4,385.7 L 233.3,396.4 L 197.4,407.1 L 89.7,407.1 Z",
-    "Westerschelde": "M 35.9,492.9 L 107.7,471.4 L 161.5,450.0 L 215.4,439.3 L 233.3,450.0 L 143.6,482.1 L 35.9,492.9 Z"
+    "Westerschelde": "M 35.9,492.9 L 107.7,471.4 L 161.5,450.0 L 215.4,439.3 L 233.3,450.0 L 143.6,482.1 L 35.9,492.9 Z",
+    "Lek": "M 320,308 L 350,309 L 380,310 L 410,311 L 440,312 L 440,324 L 410,323 L 380,322 L 350,321 L 320,320 Z"
 };
 
 // Use the simplified embedded provinces GeoJSON (kept small for offline/file:// use)
