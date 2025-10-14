@@ -1,0 +1,224 @@
+/**
+ * @jest-environment jsdom
+ */
+
+describe('Topotest Game Tests', () => {
+  describe('Game Settings UI', () => {
+    beforeEach(() => {
+      // Set up a minimal DOM
+      document.body.innerHTML = `
+        <select id="num-questions">
+          <option value="all">Alle</option>
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="15">15</option>
+          <option value="20">20</option>
+        </select>
+        <input type="checkbox" id="enable-timer">
+        <span id="timer-display" style="display: none;">
+          Tijd: <span id="timer-value">0:00</span>
+        </span>
+        <span id="score">0</span>
+        <span id="question-number">0/0</span>
+      `;
+    });
+
+    test('question limit select should exist and have correct options', () => {
+      const select = document.getElementById('num-questions');
+      expect(select).toBeTruthy();
+      expect(select.options.length).toBe(5);
+      expect(select.options[0].value).toBe('all');
+      expect(select.options[1].value).toBe('5');
+      expect(select.options[2].value).toBe('10');
+    });
+
+    test('timer checkbox should exist and be unchecked by default', () => {
+      const checkbox = document.getElementById('enable-timer');
+      expect(checkbox).toBeTruthy();
+      expect(checkbox.type).toBe('checkbox');
+      expect(checkbox.checked).toBe(false);
+    });
+
+    test('timer display should exist and be hidden by default', () => {
+      const timerDisplay = document.getElementById('timer-display');
+      expect(timerDisplay).toBeTruthy();
+      expect(timerDisplay.style.display).toBe('none');
+    });
+
+    test('should be able to change question limit', () => {
+      const select = document.getElementById('num-questions');
+      select.value = '5';
+      expect(select.value).toBe('5');
+    });
+
+    test('should be able to enable timer', () => {
+      const checkbox = document.getElementById('enable-timer');
+      checkbox.checked = true;
+      expect(checkbox.checked).toBe(true);
+    });
+  });
+
+  describe('Timer Format', () => {
+    test('timer should format seconds correctly', () => {
+      // Test that timer formats 0 seconds as 0:00
+      const format0 = (seconds) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+      };
+      
+      expect(format0(0)).toBe('0:00');
+      expect(format0(65)).toBe('1:05');
+      expect(format0(125)).toBe('2:05');
+      expect(format0(3661)).toBe('61:01');
+    });
+  });
+
+  describe('Question Limiting Logic', () => {
+    const mockData = [
+      { name: 'Item1' },
+      { name: 'Item2' },
+      { name: 'Item3' },
+      { name: 'Item4' },
+      { name: 'Item5' },
+      { name: 'Item6' },
+      { name: 'Item7' },
+      { name: 'Item8' },
+      { name: 'Item9' },
+      { name: 'Item10' },
+    ];
+
+    test('should limit questions when set to 5', () => {
+      const questionLimit = '5';
+      let dataToUse = [...mockData];
+      
+      if (questionLimit !== 'all') {
+        const limit = parseInt(questionLimit);
+        dataToUse = dataToUse.slice(0, limit);
+      }
+      
+      expect(dataToUse.length).toBe(5);
+      expect(dataToUse.length).toBeLessThan(mockData.length);
+    });
+
+    test('should not limit questions when set to all', () => {
+      const questionLimit = 'all';
+      let dataToUse = [...mockData];
+      
+      if (questionLimit !== 'all') {
+        const limit = parseInt(questionLimit);
+        dataToUse = dataToUse.slice(0, limit);
+      }
+      
+      expect(dataToUse.length).toBe(mockData.length);
+    });
+
+    test('should limit to 10 questions', () => {
+      const questionLimit = '10';
+      let dataToUse = [...mockData];
+      
+      if (questionLimit !== 'all') {
+        const limit = parseInt(questionLimit);
+        dataToUse = dataToUse.slice(0, limit);
+      }
+      
+      expect(dataToUse.length).toBe(10);
+    });
+  });
+
+  describe('String Normalization Logic', () => {
+    // Test the normalization logic that would be in normalizeAnswer
+    const normalizeTestAnswer = (answer) => {
+      try {
+        answer = answer.normalize('NFD').replace(/[-\u0300-\u036f]/g, '');
+      } catch (e) {
+        // normalize may not be supported
+      }
+
+      return answer
+        .toLowerCase()
+        .replace(/\s+/g, '')
+        .replace(/-/g, '')
+        .replace(/'/g, '')
+        .replace(/ë/g, 'e')
+        .replace(/ï/g, 'i')
+        .replace(/ö/g, 'o')
+        .replace(/ü/g, 'u')
+        .replace(/é/g, 'e')
+        .replace(/è/g, 'e')
+        .replace(/ê/g, 'e')
+        .replace(/á/g, 'a')
+        .replace(/à/g, 'a')
+        .replace(/â/g, 'a')
+        .replace(/ó/g, 'o')
+        .replace(/ò/g, 'o')
+        .replace(/ô/g, 'o');
+    };
+
+    test('should normalize simple strings to lowercase', () => {
+      expect(normalizeTestAnswer('Groningen')).toBe('groningen');
+      expect(normalizeTestAnswer('GRONINGEN')).toBe('groningen');
+    });
+
+    test('should remove spaces', () => {
+      expect(normalizeTestAnswer('Noord Holland')).toBe('noordholland');
+      expect(normalizeTestAnswer('Noord  Holland')).toBe('noordholland');
+    });
+
+    test('should remove hyphens', () => {
+      expect(normalizeTestAnswer('Noord-Holland')).toBe('noordholland');
+      expect(normalizeTestAnswer('Zuid-Holland')).toBe('zuidholland');
+    });
+
+    test('should remove apostrophes', () => {
+      expect(normalizeTestAnswer("'s-Hertogenbosch")).toBe('shertogenbosch');
+    });
+
+    test('should handle empty strings', () => {
+      expect(normalizeTestAnswer('')).toBe('');
+    });
+
+    test('should handle diacritics', () => {
+      expect(normalizeTestAnswer('café')).toBe('cafe');
+      expect(normalizeTestAnswer('naïve')).toBe('naive');
+    });
+  });
+
+  describe('Game Data Structure', () => {
+    test('province data should have correct structure', () => {
+      const sampleProvince = {
+        name: 'Groningen',
+        capital: 'Groningen',
+        type: 'province'
+      };
+      
+      expect(sampleProvince).toHaveProperty('name');
+      expect(sampleProvince).toHaveProperty('capital');
+      expect(sampleProvince).toHaveProperty('type');
+      expect(sampleProvince.type).toBe('province');
+    });
+
+    test('waterway data should have correct structure', () => {
+      const sampleWaterway = {
+        name: 'IJssel',
+        type: 'river'
+      };
+      
+      expect(sampleWaterway).toHaveProperty('name');
+      expect(sampleWaterway).toHaveProperty('type');
+      expect(['river', 'canal', 'sea', 'estuary', 'lake', 'waterway']).toContain(sampleWaterway.type);
+    });
+  });
+
+  describe('Score Calculation', () => {
+    test('should calculate percentage correctly', () => {
+      const calculatePercentage = (score, total) => Math.round((score / total) * 100);
+      
+      expect(calculatePercentage(5, 5)).toBe(100);
+      expect(calculatePercentage(4, 5)).toBe(80);
+      expect(calculatePercentage(3, 5)).toBe(60);
+      expect(calculatePercentage(0, 5)).toBe(0);
+      expect(calculatePercentage(10, 12)).toBe(83);
+    });
+  });
+});
