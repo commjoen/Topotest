@@ -90,6 +90,13 @@ const EMBEDDED_PROVINCES = {
     ]
 };
 
+// Small alias map for province names that appear in some GeoJSON sources (Frisian names etc.)
+const PROVINCE_ALIASES = {
+    'Fryslân': 'Friesland',
+    'Fryslan': 'Friesland',
+    'Frÿslan': 'Friesland'
+};
+
 // Initialize the game
 function init() {
     selectLevel(1);
@@ -231,11 +238,19 @@ function checkAnswer() {
 
 // Normalize answer for comparison
 function normalizeAnswer(answer) {
+    // Normalize unicode and strip combining diacritics first
+    try {
+        answer = answer.normalize('NFD').replace(/[-\u0300-\u036f]/g, '');
+    } catch (e) {
+        // normalize may not be supported in some environments; ignore
+    }
+
     return answer
         .toLowerCase()
         .replace(/\s+/g, '')
         .replace(/-/g, '')
         .replace(/'/g, '')
+        // fall back simple replacements for characters that sometimes remain
         .replace(/ë/g, 'e')
         .replace(/ï/g, 'i')
         .replace(/ö/g, 'o')
@@ -296,7 +311,11 @@ function updateStats() {
 // Draw the map
 function drawMap() {
     const mapSvg = document.getElementById('map');
-    mapSvg.innerHTML = '';
+    // Clear previous render but preserve any <defs> (gradients, patterns, filters)
+    const existingDefs = mapSvg.querySelector('defs');
+    Array.from(mapSvg.children).forEach(child => {
+        if (child !== existingDefs) mapSvg.removeChild(child);
+    });
     
     if (!gameStarted) {
         // Show welcome message
@@ -315,6 +334,13 @@ function drawMap() {
     
     const paths = currentLevel === 1 ? provincePaths : waterwayPaths;
     const currentQuestion = shuffledData[currentQuestionIndex];
+
+    // If drawing waterways (level 2), skip GeoJSON fetch and render using built-in paths
+    if (currentLevel === 2) {
+        renderFallback(paths, null, mapSvg, currentLevel, currentQuestion);
+        setQuestionText();
+        return;
+    }
 
     // SVG defs live in index.html (landPatternBase, waterGradient, waterGlow, shadow)
     
@@ -373,7 +399,17 @@ function drawMap() {
 
             geojson.features.forEach(feat => {
                 // Some GeoJSONs use different property keys for the display name. Try common variants.
-                const name = (feat.properties && (feat.properties.NAME || feat.properties.name || feat.properties.name_en || feat.properties.NAME_1)) || feat.id || 'Unknown';
+                let name = (feat.properties && (feat.properties.NAME || feat.properties.name || feat.properties.name_en || feat.properties.NAME_1)) || feat.id || 'Unknown';
+                // Map known aliases (e.g., Frisian names) to the canonical Dutch province names
+                if (PROVINCE_ALIASES[name]) {
+                    name = PROVINCE_ALIASES[name];
+                } else {
+                    // try normalized key
+                    try {
+                        const simple = name.normalize('NFD').replace(/[-\u0300-\u036f]/g, '');
+                        if (PROVINCE_ALIASES[simple]) name = PROVINCE_ALIASES[simple];
+                    } catch (e) {}
+                }
                 const d = pathGen(feat);
 
                 if (!d) return;
@@ -447,6 +483,8 @@ function drawMap() {
                 path.setAttribute('filter', 'url(#waterGlow)');
                 path.setAttribute('stroke-linecap', 'round');
                 path.setAttribute('stroke-linejoin', 'round');
+                // Append waterways to the SVG
+                mapSvg.appendChild(path);
             } else {
                 // Provinces: use a group with a patterned base + subtle color tint overlay
                 const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -524,6 +562,8 @@ function drawMap() {
             }
 
         });
+        // Ensure question text / highlight state is updated after fallback rendering
+        try { setQuestionText(); } catch (e) { /* ignore */ }
     }
 
     // helper to set the question text (used by both geojson and fallback branches)
