@@ -56,17 +56,13 @@ const provincePaths = {
 };
 
 // SVG map paths for waterways (more geographically accurate)
+// These are rivers and canals rendered as lines
 const waterwayPaths = {
     "IJssel": "M 515,214 L 522,229 L 528,246 L 532,264 L 535,284 L 538,304 L 540,324 L 542,344",
     "Maas": "M 495,398 L 500,418 L 505,441 L 508,464 L 510,486 L 512,508 L 513,531 L 515,554 L 518,576",
     "Waal": "M 430,308 L 460,311 L 490,315 L 520,317 L 550,319 L 580,320",
     "Neder-Rijn": "M 380,296 L 408,298 L 435,300 L 462,302 L 488,302",
     "Amsterdam-Rijnkanaal": "M 310,199 L 322,214 L 335,231 L 348,249 L 360,268 L 372,287",
-    "Waddenzee": "M 200,22 L 300,19 L 400,21 L 500,24 L 600,28 L 680,34 L 685,49 L 600,45 L 500,41 L 400,38 L 300,34 L 200,32 Z",
-    "Oosterschelde": "M 140,349 L 170,351 L 200,354 L 228,356 L 255,358",
-    "Westerschelde": "M 70,371 L 100,374 L 130,376 L 160,379 L 188,380",
-    "IJsselmeer": "M 290,105 L 325,104 L 355,106 L 380,114 L 395,128 L 402,144 L 400,161 L 390,176 L 372,186 L 350,191 L 325,194 L 300,191 L 280,184 L 268,171 L 262,156 L 262,141 L 268,128 L 278,116 Z",
-    "Markermeer": "M 355,146 L 380,145 L 400,148 L 415,158 L 422,171 L 420,186 L 410,199 L 395,206 L 375,210 L 358,208 L 345,201 L 338,189 L 335,176 L 338,164 L 348,154 Z",
     "Nieuwe Waterweg": "M 160,285 L 190,287 L 220,290 L 250,291 L 280,292",
     "Lek": "M 320,314 L 350,315 L 380,316 L 410,317 L 440,318"
 };
@@ -429,26 +425,25 @@ function drawMap() {
         });
 
         // Then, render rivers/canals as lines
-        const riverNames = ['IJssel', 'Maas', 'Waal', 'Neder-Rijn', 'Amsterdam-Rijnkanaal', 'Lek', 'Nieuwe Waterweg'];
-        riverNames.forEach(riverName => {
-            if (waterwayPaths[riverName]) {
-                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                path.setAttribute('d', waterwayPaths[riverName]);
-                path.setAttribute('class', 'map-waterway');
-                path.setAttribute('fill', 'none');
-                path.setAttribute('stroke', 'url(#waterGradient)');
-                path.setAttribute('stroke-width', '8');
-                path.setAttribute('filter', 'url(#waterGlow)');
-                path.setAttribute('stroke-linecap', 'round');
-                path.setAttribute('stroke-linejoin', 'round');
-                path.setAttribute('data-region', riverName);
-                
-                mapSvg.appendChild(path);
-                
-                // Highlight if this is the current question
-                if (currentQuestion && normalizeAnswer(riverName) === normalizeAnswer(currentQuestion.name)) {
-                    path.classList.add('highlighted');
-                }
+        // Render all waterways that are not in waterPolygonPaths (i.e., rivers and canals)
+        Object.keys(waterwayPaths).forEach(riverName => {
+            const pathData = waterwayPaths[riverName];
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', pathData);
+            path.setAttribute('class', 'map-waterway');
+            path.setAttribute('fill', 'none');
+            path.setAttribute('stroke', 'url(#waterGradient)');
+            path.setAttribute('stroke-width', '8');
+            path.setAttribute('filter', 'url(#waterGlow)');
+            path.setAttribute('stroke-linecap', 'round');
+            path.setAttribute('stroke-linejoin', 'round');
+            path.setAttribute('data-region', riverName);
+            
+            mapSvg.appendChild(path);
+            
+            // Highlight if this is the current question
+            if (currentQuestion && normalizeAnswer(riverName) === normalizeAnswer(currentQuestion.name)) {
+                path.classList.add('highlighted');
             }
         });
     }
