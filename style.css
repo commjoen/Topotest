@@ -8,9 +8,8 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    /* Use normal document flow to allow vertical scrolling */
+    display: block;
     padding: 20px;
 }
 
@@ -20,9 +19,7 @@ body {
     background: white;
     border-radius: 20px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    overflow: hidden;
-    /* Make container use most of the viewport but leave room for page padding */
-    max-height: calc(100vh - 40px);
+    overflow: visible;
 }
 
 header {
@@ -50,8 +47,6 @@ header h1 {
     grid-template-rows: auto 1fr auto;
     gap: 18px 24px;
     align-items: start;
-    /* Ensure the inner area doesn't exceed the available space */
-    max-height: calc(100vh - 220px);
 }
 
 .level-selector {
@@ -119,10 +114,9 @@ header h1 {
     display: flex;
     justify-content: center;
     align-items: center;
-    /* let the map expand but not exceed available space */
+    /* let the map expand; allow page to scroll if necessary */
     min-height: 300px;
-    max-height: calc(100vh - 340px);
-    overflow: hidden;
+    overflow: visible;
     grid-column: 1 / span 1;
 }
 
@@ -146,6 +140,11 @@ header h1 {
     transform: translateY(-4px);
     opacity: 1;
     filter: drop-shadow(0 6px 10px rgba(0,0,0,0.08));
+}
+
+/* Disable hover transform on devices that don't support hover (touch devices) */
+@media (hover: none) {
+    .map-region:hover { transform: none; filter: none; }
 }
 
 .map-region.highlighted {
@@ -180,6 +179,27 @@ header h1 {
     transition: stroke-width 0.25s ease, opacity 0.25s ease;
     cursor: pointer;
     opacity: 0.95;
+}
+
+/* Filled water polygons (lakes, seas, estuaries) */
+.map-waterbody {
+    mix-blend-mode: multiply;
+    transition: opacity 0.25s ease;
+    stroke: rgba(255,255,255,0.18);
+    stroke-width: 0.6;
+    vector-effect: non-scaling-stroke;
+}
+
+/* Shoreline rim for water polygons */
+.map-waterbody-shore {
+    fill: none;
+    stroke: rgba(255,255,255,0.9);
+    stroke-width: 1.6;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    opacity: 0.95;
+    pointer-events: none;
+    filter: drop-shadow(0 1px 0 rgba(255,255,255,0.06));
 }
 
 .map-waterway:hover {
@@ -231,6 +251,27 @@ header h1 {
     margin-bottom: 20px;
     font-size: 1.5em;
 }
+
+/* Mobile-specific map height cap and smoother scrolling */
+@media (max-width: 600px) {
+    .map-container {
+        min-height: 220px;
+        max-height: 48vh; /* cap to viewport height so controls remain visible */
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #map { max-height: 100%; }
+
+    /* Make control buttons full width on small screens */
+    .controls { flex-direction: column; gap: 12px; }
+    .controls button, .level-btn { width: 100%; padding: 14px 18px; }
+
+    #answer-input { font-size: 1.05em; padding: 12px; }
+}
+
+/* Improve tap targets and reduce highlight flash */
+button, .level-btn { touch-action: manipulation; -webkit-tap-highlight-color: rgba(0,0,0,0.05); }
 
 #answer-input {
     width: 100%;
