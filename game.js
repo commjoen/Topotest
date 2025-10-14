@@ -39,6 +39,10 @@ let gameStarted = false;
 let currentData = [];
 let shuffledData = [];
 let askedQuestions = [];
+let timerEnabled = false;
+let timerInterval = null;
+let timerSeconds = 0;
+let questionLimit = 'all';
 
 // SVG map paths for provinces (geographically accurate shapes based on real Netherlands geography)
 const provincePaths = {
@@ -108,6 +112,52 @@ const PROVINCE_ALIASES = {
 function init() {
     selectLevel(1);
     updateStats();
+    
+    // Add event listeners for settings
+    const timerCheckbox = document.getElementById('enable-timer');
+    timerCheckbox.addEventListener('change', function() {
+        timerEnabled = this.checked;
+        updateTimerDisplay();
+    });
+    
+    const numQuestionsSelect = document.getElementById('num-questions');
+    numQuestionsSelect.addEventListener('change', function() {
+        questionLimit = this.value;
+    });
+}
+
+// Timer functions
+function startTimer() {
+    if (!timerEnabled) return;
+    
+    timerSeconds = 0;
+    updateTimerDisplay();
+    
+    timerInterval = setInterval(() => {
+        timerSeconds++;
+        updateTimerDisplay();
+    }, 1000);
+}
+
+function stopTimer() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+}
+
+function updateTimerDisplay() {
+    const timerDisplay = document.getElementById('timer-display');
+    const timerValue = document.getElementById('timer-value');
+    
+    if (timerEnabled && gameStarted) {
+        timerDisplay.style.display = 'inline';
+        const minutes = Math.floor(timerSeconds / 60);
+        const seconds = timerSeconds % 60;
+        timerValue.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    } else {
+        timerDisplay.style.display = 'none';
+    }
 }
 
 // Select level
@@ -123,6 +173,11 @@ function selectLevel(level) {
     score = 0;
     gameStarted = false;
     askedQuestions = [];
+    
+    // Stop timer
+    stopTimer();
+    timerSeconds = 0;
+    updateTimerDisplay();
     
     // Set current data based on level
     currentData = level === 1 ? level1Data : level2Data;
@@ -148,11 +203,22 @@ function startGame() {
     askedQuestions = [];
     
     // Shuffle the data
-    shuffledData = [...currentData].sort(() => Math.random() - 0.5);
+    let dataToUse = [...currentData].sort(() => Math.random() - 0.5);
+    
+    // Apply question limit
+    if (questionLimit !== 'all') {
+        const limit = parseInt(questionLimit);
+        dataToUse = dataToUse.slice(0, limit);
+    }
+    
+    shuffledData = dataToUse;
     
     document.getElementById('start-btn').style.display = 'none';
     document.getElementById('submit-btn').disabled = false;
     document.getElementById('answer-input').disabled = false;
+    
+    // Start timer if enabled
+    startTimer();
     
     nextQuestion();
 }
@@ -275,6 +341,9 @@ function normalizeAnswer(answer) {
 
 // End the game
 function endGame() {
+    // Stop timer
+    stopTimer();
+    
     const totalQuestions = shuffledData.length;
     const percentage = Math.round((score / totalQuestions) * 100);
     
@@ -285,6 +354,12 @@ function endGame() {
     feedback.style.border = '2px solid #b8daff';
     
     let message = `Spel afgelopen! Je score: ${score}/${totalQuestions} (${percentage}%)`;
+    
+    if (timerEnabled) {
+        const minutes = Math.floor(timerSeconds / 60);
+        const seconds = timerSeconds % 60;
+        message += ` | Tijd: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
     
     if (percentage === 100) {
         message += ' 🎉 Perfect!';
@@ -658,3 +733,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize the game
     init();
 });
+
+// Export functions for testing (if running in Node.js environment)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        normalizeAnswer,
+        level1Data,
+        level2Data,
+        // Export functions for testing
+        updateStats,
+        updateTimerDisplay
+    };
+}
