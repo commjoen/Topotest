@@ -183,6 +183,7 @@ function init() {
     questionLimit = getQuestionLimit();
     const numQuestionsInput = document.getElementById('num-questions');
     numQuestionsInput.value = questionLimit;
+    updateStats(); // Update stats after loading the saved preference
     
     // Add event listeners for settings
     const timerCheckbox = document.getElementById('enable-timer');
@@ -196,6 +197,7 @@ function init() {
         this.value = validatedValue;
         questionLimit = validatedValue;
         saveQuestionLimit(questionLimit);
+        updateStats(); // Update the display when question limit changes
     });
     
     numQuestionsInput.addEventListener('blur', function() {
@@ -203,6 +205,7 @@ function init() {
         this.value = validatedValue;
         questionLimit = validatedValue;
         saveQuestionLimit(questionLimit);
+        updateStats(); // Update the display when question limit changes
     });
 }
 
@@ -475,7 +478,18 @@ function restartGame() {
 // Update statistics display
 function updateStats() {
     document.getElementById('score').textContent = score;
-    const total = gameStarted ? shuffledData.length : currentData.length;
+    let total;
+    if (gameStarted) {
+        total = shuffledData.length;
+    } else {
+        // Calculate expected total based on questionLimit setting
+        if (questionLimit === 'all') {
+            total = currentData.length;
+        } else {
+            const limit = parseInt(questionLimit, 10);
+            total = Math.min(limit, currentData.length);
+        }
+    }
     document.getElementById('question-number').textContent = `${currentQuestionIndex}/${total}`;
 }
 
