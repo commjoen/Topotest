@@ -10,7 +10,7 @@ const level1Data = [
     { name: "Noord-Holland", capital: "Haarlem", type: "province" },
     { name: "Zuid-Holland", capital: "Den Haag", type: "province" },
     { name: "Zeeland", capital: "Middelburg", type: "province" },
-    { name: "Noord-Brabant", capital: "Den Bosch", type: "province" },
+    { name: "Noord-Brabant", capital: "'s-Hertogenbosch", type: "province" },
     { name: "Limburg", capital: "Maastricht", type: "province" }
 ];
 
