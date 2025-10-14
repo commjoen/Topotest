@@ -424,8 +424,7 @@ function drawMap() {
             }
         });
 
-        // Then, render rivers/canals as lines
-        // Render all waterways that are not in waterPolygonPaths (i.e., rivers and canals)
+        // Render rivers and canals as lines
         Object.keys(waterwayPaths).forEach(riverName => {
             const pathData = waterwayPaths[riverName];
             const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
