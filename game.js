@@ -662,7 +662,12 @@ function drawMap() {
                 }
                 const d = pathGen(feat);
 
-                if (!d) return;
+                if (!d) {
+                    console.warn('No path generated for feature:', name);
+                    return;
+                }
+                
+                console.log('Generated path for', name, '- path length:', d.length);
 
                 if (currentLevel === 1) {
                     // provinces: create group similar to previous logic
