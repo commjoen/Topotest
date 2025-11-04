@@ -644,8 +644,27 @@ function drawMap() {
         try {
             console.log('renderGeoJSON: Starting render with', geojson.features.length, 'features');
             const width = 700, height = 600;
-            const projection = d3.geoMercator().fitSize([width, height], geojson);
+            
+            // Manual projection setup for Netherlands
+            // Netherlands bounds: roughly 3.3°E to 7.2°E, 50.7°N to 53.6°N
+            const projection = d3.geoMercator()
+                .center([5.5, 52.2])  // Center of Netherlands
+                .scale(8000)  // Start with a reasonable scale
+                .translate([width / 2, height / 2]);
+            
+            // Adjust scale to fit the bounds
             const pathGen = d3.geoPath().projection(projection);
+            const bounds = pathGen.bounds(geojson);
+            const dx = bounds[1][0] - bounds[0][0];
+            const dy = bounds[1][1] - bounds[0][1];
+            const scale = Math.min(width / dx, height / dy) * 0.9;  // 0.9 for padding
+            const translate = [
+                (width - scale * (bounds[1][0] + bounds[0][0])) / 2,
+                (height - scale * (bounds[1][1] + bounds[0][1])) / 2
+            ];
+            
+            projection.scale(scale).translate(translate);
+            console.log('Projection configured - scale:', scale, 'translate:', translate);
 
             geojson.features.forEach(feat => {
                 // Some GeoJSONs use different property keys for the display name. Try common variants.
