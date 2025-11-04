@@ -667,7 +667,7 @@ function drawMap() {
                     return;
                 }
                 
-                console.log('Generated path for', name, '- path length:', d.length);
+                console.log('Generated path for', name, '- path length:', d.length, '- starts with:', d.substring(0, 50));
 
                 if (currentLevel === 1) {
                     // provinces: create group similar to previous logic
