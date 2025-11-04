@@ -645,9 +645,8 @@ function drawMap() {
             console.log('renderGeoJSON: Starting render with', geojson.features.length, 'features');
             const width = 700, height = 600;
             
-            // Use fitExtent for proper scaling with padding
-            const projection = d3.geoMercator()
-                .fitExtent([[20, 20], [width - 20, height - 20]], geojson);
+            // Use fitSize for automatic scaling
+            const projection = d3.geoMercator().fitSize([width, height], geojson);
             
             console.log('Projection configured - scale:', projection.scale(), 'translate:', projection.translate());
             const pathGen = d3.geoPath().projection(projection);
