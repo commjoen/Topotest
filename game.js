@@ -553,6 +553,14 @@ function drawMap() {
     // Try loading a detailed local GeoJSON first (assets/provinces.geojson).
     // If that fails (missing file, parse error, or CORS when served via file://), fall back to the embedded simplified dataset.
     (async function tryLoadLocalGeoJSON() {
+        // Check if d3 is available before attempting GeoJSON rendering
+        if (typeof d3 === 'undefined') {
+            console.warn('d3.js not loaded, using fallback rendering');
+            renderFallback(paths, tintMap, mapSvg, currentLevel, currentQuestion);
+            setQuestionText();
+            return;
+        }
+        
         try {
             const resp = await fetch('assets/provinces.geojson');
             if (resp.ok) {
@@ -563,6 +571,7 @@ function drawMap() {
             }
         } catch (e) {
             // fetch can fail under file:// or if the file is absent — fall back below
+            console.warn('Failed to load provinces.geojson:', e);
         }
 
         // final fallback: embedded simplified data
@@ -572,6 +581,9 @@ function drawMap() {
             return;
         } catch (err) {
             // fall through to the old vector fallback
+            console.warn('Failed to render embedded provinces:', err);
+            renderFallback(paths, tintMap, mapSvg, currentLevel, currentQuestion);
+            setQuestionText();
         }
     })();
 
@@ -630,8 +642,13 @@ function drawMap() {
     // Render helper for GeoJSON via D3
     function renderGeoJSON(geojson) {
         try {
+            console.log('renderGeoJSON: Starting render with', geojson.features.length, 'features');
             const width = 700, height = 600;
+            
+            // Use fitSize for automatic scaling
             const projection = d3.geoMercator().fitSize([width, height], geojson);
+            
+            console.log('Projection configured - scale:', projection.scale(), 'translate:', projection.translate());
             const pathGen = d3.geoPath().projection(projection);
 
             geojson.features.forEach(feat => {
@@ -649,7 +666,12 @@ function drawMap() {
                 }
                 const d = pathGen(feat);
 
-                if (!d) return;
+                if (!d) {
+                    console.warn('No path generated for feature:', name);
+                    return;
+                }
+                
+                console.log('Generated path for', name, '- path length:', d.length, '- starts with:', d.substring(0, 50));
 
                 if (currentLevel === 1) {
                     // provinces: create group similar to previous logic
@@ -694,9 +716,12 @@ function drawMap() {
                     mapSvg.appendChild(w);
                 }
             });
+            
+            console.log('renderGeoJSON: Successfully rendered', geojson.features.length, 'provinces');
 
         } catch (err) {
             // fallback below
+            console.error('renderGeoJSON error:', err);
             renderFallback(paths, tintMap, mapSvg, currentLevel, currentQuestion);
         }
     }
