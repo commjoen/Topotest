@@ -426,6 +426,11 @@ footer p {
     opacity: 0.8;
 }
 
+footer p.practice-link {
+    margin-top: 10px;
+    font-size: 0.85em;
+}
+
 footer a {
     color: #51cf66;
     text-decoration: none;
