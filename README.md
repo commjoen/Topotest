@@ -67,6 +67,12 @@ In dit level leren kinderen de namen van belangrijke Nederlandse wateren:
 - Nieuwe Waterweg
 - Lek
 
+### Level 3: Noordelijke Steden
+In dit level leren kinderen de namen van belangrijke steden in de noordelijke provincies:
+- **Friesland**: Leeuwarden, Sneek, Heerenveen, Drachten
+- **Groningen**: Groningen, Delfzijl, Veendam
+- **Drenthe**: Assen, Meppel, Hoogeveen, Emmen
+
 ## Hoe te gebruiken
 1. Open `index.html` in een webbrowser
 2. Kies een level (Level 1 of Level 2)

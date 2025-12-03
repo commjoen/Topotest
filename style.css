@@ -274,6 +274,54 @@ header h1 {
     filter: drop-shadow(0 6px 10px rgba(255, 138, 122, 0.15));
 }
 
+/* City markers for Level 3 */
+.city-marker {
+    fill: #667eea;
+    stroke: #fff;
+    stroke-width: 2;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.city-marker:hover {
+    fill: #764ba2;
+    r: 8;
+}
+
+.city-marker.highlighted {
+    fill: #ff6b6b;
+    stroke: #fff;
+    stroke-width: 3;
+    animation: cityPulse 1.5s ease-in-out infinite;
+}
+
+.city-label {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 12px;
+    fill: #2b2b2b;
+    font-weight: 600;
+    pointer-events: none;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+.city-label.highlighted {
+    fill: #ff6b6b;
+    font-weight: 700;
+    font-size: 14px;
+    text-shadow: 0 1px 3px rgba(255, 255, 255, 1);
+}
+
+@keyframes cityPulse {
+    0%, 100% {
+        fill: #ff6b6b;
+        r: 10;
+    }
+    50% {
+        fill: #ff4444;
+        r: 12;
+    }
+}
+
 @keyframes pulse {
     0%, 100% {
         fill: #ff6b6b;

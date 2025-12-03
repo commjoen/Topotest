@@ -1,0 +1,148 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Leeuwarden"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.7984,
+          53.2012
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Sneek"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.6581,
+          53.0323
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Heerenveen"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.9197,
+          52.9598
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Drachten"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.0989,
+          53.1126
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Groningen"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.5665,
+          53.2194
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Delfzijl"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.9237,
+          53.3306
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Veendam"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.8779,
+          53.1058
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Assen"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.5623,
+          52.9968
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Meppel"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.1945,
+          52.6956
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Hoogeveen"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.4764,
+          52.7232
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Emmen"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.9004,
+          52.7858
+        ]
+      }
+    }
+  ]
+}
