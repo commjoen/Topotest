@@ -1,0 +1,200 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Groningen",
+        "province": "Groningen",
+        "type": "city",
+        "capital": true
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [6.5665, 53.2194]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Delfzijl",
+        "province": "Groningen",
+        "type": "city",
+        "capital": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [6.9265, 53.3308]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Hoogezand",
+        "province": "Groningen",
+        "type": "city",
+        "capital": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [6.7614, 53.1621]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Veendam",
+        "province": "Groningen",
+        "type": "city",
+        "capital": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [6.8787, 53.1053]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Stadskanaal",
+        "province": "Groningen",
+        "type": "city",
+        "capital": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [6.9627, 52.9909]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Winschoten",
+        "province": "Groningen",
+        "type": "city",
+        "capital": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.0374, 53.1435]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Appingedam",
+        "province": "Groningen",
+        "type": "city",
+        "capital": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [6.8573, 53.3216]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Leeuwarden",
+        "province": "Friesland",
+        "type": "city",
+        "capital": true
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [5.7877, 53.2012]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Sneek",
+        "province": "Friesland",
+        "type": "city",
+        "capital": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [5.6584, 53.0321]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Heerenveen",
+        "province": "Friesland",
+        "type": "city",
+        "capital": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [5.9196, 52.9596]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Drachten",
+        "province": "Friesland",
+        "type": "city",
+        "capital": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [6.0989, 53.1126]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Harlingen",
+        "province": "Friesland",
+        "type": "city",
+        "capital": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [5.4211, 53.1745]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Franeker",
+        "province": "Friesland",
+        "type": "city",
+        "capital": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [5.5411, 53.1878]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Dokkum",
+        "province": "Friesland",
+        "type": "city",
+        "capital": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [5.9993, 53.3256]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Bolsward",
+        "province": "Friesland",
+        "type": "city",
+        "capital": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [5.5315, 53.0647]
+      }
+    }
+  ]
+}

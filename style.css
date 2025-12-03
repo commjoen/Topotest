@@ -484,3 +484,38 @@ footer a:hover {
         font-size: 1.15em;
     }
 }
+
+/* City marker styles for Level 3 */
+.city-marker {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.city-marker:hover {
+    r: 8;
+    fill: #555;
+}
+
+.city-marker.highlighted {
+    fill: #000 !important;
+    stroke: #fff !important;
+    stroke-width: 3 !important;
+    filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.5));
+}
+
+.city-label {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    pointer-events: none;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.city-label.highlighted {
+    font-weight: bold !important;
+    font-size: 14px !important;
+    fill: #000 !important;
+    text-shadow: 0 0 3px rgba(255, 255, 255, 1);
+}
+
+.map-province-background {
+    pointer-events: none;
+}

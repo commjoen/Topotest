@@ -67,9 +67,31 @@ In dit level leren kinderen de namen van belangrijke Nederlandse wateren:
 - Nieuwe Waterweg
 - Lek
 
+### Level 3: Groningen & Friesland Steden
+In dit level leren kinderen de namen van steden in de provincies Groningen en Friesland:
+
+**Groningen:**
+- Groningen (hoofdstad)
+- Delfzijl
+- Hoogezand
+- Veendam
+- Stadskanaal
+- Winschoten
+- Appingedam
+
+**Friesland:**
+- Leeuwarden (hoofdstad)
+- Sneek
+- Heerenveen
+- Drachten
+- Harlingen
+- Franeker
+- Dokkum
+- Bolsward
+
 ## Hoe te gebruiken
 1. Open `index.html` in een webbrowser
-2. Kies een level (Level 1 of Level 2)
+2. Kies een level (Level 1, Level 2, of Level 3)
 3. Klik op "Start Spel"
 4. Bekijk de gemarkeerde regio op de kaart
 5. Voer de naam in van de gemarkeerde regio

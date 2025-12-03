@@ -31,6 +31,25 @@ const level2Data = [
     { name: "Noordzeekanaal", type: "canal" }
 ];
 
+// Game data for Level 3: Groningen & Friesland Cities
+const level3Data = [
+    { name: "Groningen", province: "Groningen", type: "city", capital: true },
+    { name: "Delfzijl", province: "Groningen", type: "city", capital: false },
+    { name: "Hoogezand", province: "Groningen", type: "city", capital: false },
+    { name: "Veendam", province: "Groningen", type: "city", capital: false },
+    { name: "Stadskanaal", province: "Groningen", type: "city", capital: false },
+    { name: "Winschoten", province: "Groningen", type: "city", capital: false },
+    { name: "Appingedam", province: "Groningen", type: "city", capital: false },
+    { name: "Leeuwarden", province: "Friesland", type: "city", capital: true },
+    { name: "Sneek", province: "Friesland", type: "city", capital: false },
+    { name: "Heerenveen", province: "Friesland", type: "city", capital: false },
+    { name: "Drachten", province: "Friesland", type: "city", capital: false },
+    { name: "Harlingen", province: "Friesland", type: "city", capital: false },
+    { name: "Franeker", province: "Friesland", type: "city", capital: false },
+    { name: "Dokkum", province: "Friesland", type: "city", capital: false },
+    { name: "Bolsward", province: "Friesland", type: "city", capital: false }
+];
+
 // Game state
 let currentLevel = 1;
 let currentQuestionIndex = 0;
@@ -48,9 +67,9 @@ let questionLimit = 'all';
 function getHighScores() {
     try {
         const scores = localStorage.getItem('topotest-highscores');
-        return scores ? JSON.parse(scores) : { level1: 0, level2: 0 };
+        return scores ? JSON.parse(scores) : { level1: 0, level2: 0, level3: 0 };
     } catch (e) {
-        return { level1: 0, level2: 0 };
+        return { level1: 0, level2: 0, level3: 0 };
     }
 }
 
@@ -250,6 +269,7 @@ function selectLevel(level) {
     // Update button states
     document.getElementById('level1-btn').classList.toggle('active', level === 1);
     document.getElementById('level2-btn').classList.toggle('active', level === 2);
+    document.getElementById('level3-btn').classList.toggle('active', level === 3);
     
     // Reset game state
     currentQuestionIndex = 0;
@@ -263,7 +283,7 @@ function selectLevel(level) {
     updateTimerDisplay();
     
     // Set current data based on level
-    currentData = level === 1 ? level1Data : level2Data;
+    currentData = level === 1 ? level1Data : (level === 2 ? level2Data : level3Data);
     
     // Reset UI
     document.getElementById('answer-input').value = '';
@@ -363,13 +383,21 @@ function checkAnswer() {
                 feedback.textContent = `Helaas, de hoofdstad is ${currentQuestion.capital}.`;
             }
         }
-    } else {
+    } else if (currentLevel === 2) {
         // Level 2: waterways
         isCorrect = normalizeAnswer(userAnswer) === normalizeAnswer(currentQuestion.name);
         if (isCorrect) {
             feedback.textContent = `Correct! Het is de ${currentQuestion.name}.`;
         } else {
             feedback.textContent = `Helaas, het juiste antwoord is de ${currentQuestion.name}.`;
+        }
+    } else if (currentLevel === 3) {
+        // Level 3: cities in Groningen & Friesland
+        isCorrect = normalizeAnswer(userAnswer) === normalizeAnswer(currentQuestion.name);
+        if (isCorrect) {
+            feedback.textContent = `Correct! Het is ${currentQuestion.name}.`;
+        } else {
+            feedback.textContent = `Helaas, het juiste antwoord is ${currentQuestion.name}.`;
         }
     }
     
@@ -527,6 +555,13 @@ function drawMap() {
         return;
     }
 
+    // If drawing cities (level 3), render Groningen & Friesland provinces with cities
+    if (currentLevel === 3) {
+        renderCitiesLevel();
+        setQuestionText();
+        return;
+    }
+
     // SVG defs live in index.html (landPatternBase, waterGradient, waterGlow, shadow)
     
     // For level 1, randomly decide whether to ask for province or capital
@@ -637,6 +672,118 @@ function drawMap() {
                 path.classList.add('highlighted');
             }
         });
+    }
+
+    // Render helper for Level 3: Cities in Groningen & Friesland
+    async function renderCitiesLevel() {
+        if (typeof d3 === 'undefined') {
+            console.warn('d3.js not loaded, cannot render cities level');
+            return;
+        }
+
+        try {
+            // Load the province boundaries for Groningen and Friesland
+            const provincesResp = await fetch('assets/groningen_friesland_provinces.geojson');
+            if (!provincesResp.ok) throw new Error('Failed to load provinces');
+            const provinces = await provincesResp.json();
+
+            // Load the cities data
+            const citiesResp = await fetch('assets/groningen_friesland_cities.geojson');
+            if (!citiesResp.ok) throw new Error('Failed to load cities');
+            const cities = await citiesResp.json();
+
+            const width = 700, height = 600;
+            
+            // Use fitSize for automatic scaling of the combined region
+            const projection = d3.geoMercator().fitSize([width, height], provinces);
+            const pathGen = d3.geoPath().projection(projection);
+
+            // Define colors for the two provinces
+            const provinceColors = {
+                "Groningen": '#c77c6b',
+                "Friesland": '#d08a6c'
+            };
+
+            // Render province boundaries
+            provinces.features.forEach(feat => {
+                const name = feat.properties.name || feat.properties.NAME || 'Unknown';
+                const d = pathGen(feat);
+                if (!d) return;
+
+                const color = provinceColors[name] || '#d09a74';
+                const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                
+                // Base province shape
+                const base = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                base.setAttribute('d', d);
+                base.setAttribute('fill', color);
+                base.setAttribute('opacity', '0.3');
+                base.setAttribute('class', 'map-province-background');
+                group.appendChild(base);
+                
+                // Province border
+                const border = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                border.setAttribute('d', d);
+                border.setAttribute('fill', 'none');
+                border.setAttribute('stroke', '#8a6a57');
+                border.setAttribute('stroke-width', '2');
+                border.setAttribute('pointer-events', 'none');
+                group.appendChild(border);
+                
+                mapSvg.appendChild(group);
+            });
+
+            // Render cities as markers
+            cities.features.forEach(feat => {
+                const cityName = feat.properties.name;
+                const coords = projection(feat.geometry.coordinates);
+                if (!coords) return;
+
+                const [x, y] = coords;
+
+                // Create city marker group
+                const cityGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                cityGroup.setAttribute('data-city', cityName);
+
+                // City marker circle
+                const marker = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                marker.setAttribute('cx', x);
+                marker.setAttribute('cy', y);
+                marker.setAttribute('r', '6');
+                marker.setAttribute('class', 'city-marker');
+                marker.setAttribute('fill', '#333');
+                marker.setAttribute('stroke', '#fff');
+                marker.setAttribute('stroke-width', '2');
+
+                // City label
+                const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                label.setAttribute('x', x);
+                label.setAttribute('y', y + 18);
+                label.setAttribute('text-anchor', 'middle');
+                label.setAttribute('class', 'city-label');
+                label.setAttribute('font-size', '12');
+                label.setAttribute('fill', '#333');
+                label.textContent = cityName;
+
+                cityGroup.appendChild(marker);
+                cityGroup.appendChild(label);
+
+                // Highlight if this is the current question
+                if (currentQuestion && normalizeAnswer(cityName) === normalizeAnswer(currentQuestion.name)) {
+                    marker.classList.add('highlighted');
+                    marker.setAttribute('r', '10');
+                    marker.setAttribute('fill', '#000');
+                    label.classList.add('highlighted');
+                    label.setAttribute('fill', '#000');
+                    label.setAttribute('font-weight', 'bold');
+                }
+
+                mapSvg.appendChild(cityGroup);
+            });
+
+        } catch (err) {
+            console.error('Failed to render cities level:', err);
+        }
     }
 
     // Render helper for GeoJSON via D3
@@ -842,8 +989,10 @@ function drawMap() {
                     el.classList.remove('highlighted');
                 });
             }
-        } else {
+        } else if (currentLevel === 2) {
             questionElement.textContent = 'Wat is de naam van het gemarkeerde water?';
+        } else if (currentLevel === 3) {
+            questionElement.textContent = 'Wat is de naam van de gemarkeerde stad?';
         }
     }
     
@@ -868,6 +1017,7 @@ if (typeof module !== 'undefined' && module.exports) {
         normalizeAnswer,
         level1Data,
         level2Data,
+        level3Data,
         // Export functions for testing
         updateStats,
         updateTimerDisplay

@@ -382,4 +382,126 @@ describe('Topotest Game Tests', () => {
       expect(validateQuestionLimit('10.9')).toBe('10');
     });
   });
+
+  describe('Level 3: Groningen & Friesland Cities', () => {
+    test('level 3 data should have correct structure', () => {
+      const sampleCity = {
+        name: 'Groningen',
+        province: 'Groningen',
+        type: 'city',
+        capital: true
+      };
+      
+      expect(sampleCity).toHaveProperty('name');
+      expect(sampleCity).toHaveProperty('province');
+      expect(sampleCity).toHaveProperty('type');
+      expect(sampleCity).toHaveProperty('capital');
+      expect(sampleCity.type).toBe('city');
+      expect(['Groningen', 'Friesland']).toContain(sampleCity.province);
+    });
+
+    test('should have cities from both Groningen and Friesland', () => {
+      const level3Data = [
+        { name: "Groningen", province: "Groningen", type: "city", capital: true },
+        { name: "Leeuwarden", province: "Friesland", type: "city", capital: true },
+        { name: "Delfzijl", province: "Groningen", type: "city", capital: false },
+        { name: "Sneek", province: "Friesland", type: "city", capital: false }
+      ];
+
+      const groningenCities = level3Data.filter(c => c.province === 'Groningen');
+      const frieslandCities = level3Data.filter(c => c.province === 'Friesland');
+
+      expect(groningenCities.length).toBeGreaterThan(0);
+      expect(frieslandCities.length).toBeGreaterThan(0);
+    });
+
+    test('should have capital cities marked correctly', () => {
+      const level3Data = [
+        { name: "Groningen", province: "Groningen", type: "city", capital: true },
+        { name: "Leeuwarden", province: "Friesland", type: "city", capital: true },
+        { name: "Delfzijl", province: "Groningen", type: "city", capital: false }
+      ];
+
+      const capitals = level3Data.filter(c => c.capital === true);
+      expect(capitals.length).toBe(2);
+      expect(capitals.map(c => c.name)).toContain('Groningen');
+      expect(capitals.map(c => c.name)).toContain('Leeuwarden');
+    });
+
+    test('should normalize city names correctly', () => {
+      const normalizeTestAnswer = (answer) => {
+        try {
+          answer = answer.normalize('NFD').replace(/[-\u0300-\u036f]/g, '');
+        } catch (e) {
+          // normalize may not be supported
+        }
+
+        return answer
+          .toLowerCase()
+          .replace(/\s+/g, '')
+          .replace(/-/g, '')
+          .replace(/'/g, '');
+      };
+
+      expect(normalizeTestAnswer('Groningen')).toBe('groningen');
+      expect(normalizeTestAnswer('Leeuwarden')).toBe('leeuwarden');
+      expect(normalizeTestAnswer('s-Hertogenbosch')).toBe('shertogenbosch');
+    });
+  });
+
+  describe('High Scores for Level 3', () => {
+    const getHighScores = () => {
+      try {
+        const scores = localStorage.getItem('topotest-highscores');
+        return scores ? JSON.parse(scores) : { level1: 0, level2: 0, level3: 0 };
+      } catch (e) {
+        return { level1: 0, level2: 0, level3: 0 };
+      }
+    };
+
+    const saveHighScore = (level, score) => {
+      try {
+        const scores = localStorage.getItem('topotest-highscores');
+        const highScores = scores ? JSON.parse(scores) : { level1: 0, level2: 0, level3: 0 };
+        const key = `level${level}`;
+        if (score > highScores[key]) {
+          highScores[key] = score;
+          localStorage.setItem('topotest-highscores', JSON.stringify(highScores));
+          return true;
+        }
+        return false;
+      } catch (e) {
+        return false;
+      }
+    };
+
+    beforeEach(() => {
+      localStorage.clear();
+    });
+
+    test('should initialize with zero score for level 3', () => {
+      const scores = getHighScores();
+      expect(scores).toHaveProperty('level3');
+      expect(scores.level3).toBe(0);
+    });
+
+    test('should save high score for level 3', () => {
+      const isNewHighScore = saveHighScore(3, 15);
+      expect(isNewHighScore).toBe(true);
+      
+      const savedScores = JSON.parse(localStorage.getItem('topotest-highscores'));
+      expect(savedScores.level3).toBe(15);
+    });
+
+    test('should maintain high scores for all three levels independently', () => {
+      saveHighScore(1, 10);
+      saveHighScore(2, 8);
+      saveHighScore(3, 12);
+      
+      const savedScores = JSON.parse(localStorage.getItem('topotest-highscores'));
+      expect(savedScores.level1).toBe(10);
+      expect(savedScores.level2).toBe(8);
+      expect(savedScores.level3).toBe(12);
+    });
+  });
 });
