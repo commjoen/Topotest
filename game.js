@@ -763,16 +763,19 @@ function drawMap() {
                         
                         mapSvg.appendChild(circle);
                         
-                        // Draw city label
+                        // Draw city label - show ??? for all cities except show actual name for highlighted city
                         const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                         label.setAttribute('x', cx);
                         label.setAttribute('y', cy - 10);
                         label.setAttribute('text-anchor', 'middle');
                         label.setAttribute('class', 'city-label');
-                        label.textContent = cityName;
                         
+                        // Only show the name for the current question city, hide others with ???
                         if (currentQuestion && normalizeAnswer(cityName) === normalizeAnswer(currentQuestion.name)) {
+                            label.textContent = '???';
                             label.classList.add('highlighted');
+                        } else {
+                            label.textContent = '???';
                         }
                         
                         mapSvg.appendChild(label);
