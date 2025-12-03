@@ -206,6 +206,20 @@ describe('Topotest Game Tests', () => {
       expect(sampleWaterway).toHaveProperty('type');
       expect(['river', 'canal', 'sea', 'estuary', 'lake', 'waterway']).toContain(sampleWaterway.type);
     });
+
+    test('city data should have correct structure', () => {
+      const sampleCity = {
+        name: 'Leeuwarden',
+        province: 'Friesland',
+        type: 'city'
+      };
+      
+      expect(sampleCity).toHaveProperty('name');
+      expect(sampleCity).toHaveProperty('province');
+      expect(sampleCity).toHaveProperty('type');
+      expect(sampleCity.type).toBe('city');
+      expect(['Friesland', 'Groningen', 'Drenthe']).toContain(sampleCity.province);
+    });
   });
 
   describe('Score Calculation', () => {

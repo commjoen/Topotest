@@ -31,6 +31,21 @@ const level2Data = [
     { name: "Noordzeekanaal", type: "canal" }
 ];
 
+// Game data for Level 3: Cities of Northern Provinces
+const level3Data = [
+    { name: "Leeuwarden", province: "Friesland", type: "city" },
+    { name: "Sneek", province: "Friesland", type: "city" },
+    { name: "Heerenveen", province: "Friesland", type: "city" },
+    { name: "Drachten", province: "Friesland", type: "city" },
+    { name: "Groningen", province: "Groningen", type: "city" },
+    { name: "Delfzijl", province: "Groningen", type: "city" },
+    { name: "Veendam", province: "Groningen", type: "city" },
+    { name: "Assen", province: "Drenthe", type: "city" },
+    { name: "Meppel", province: "Drenthe", type: "city" },
+    { name: "Hoogeveen", province: "Drenthe", type: "city" },
+    { name: "Emmen", province: "Drenthe", type: "city" }
+];
+
 // Game state
 let currentLevel = 1;
 let currentQuestionIndex = 0;
@@ -48,9 +63,9 @@ let questionLimit = 'all';
 function getHighScores() {
     try {
         const scores = localStorage.getItem('topotest-highscores');
-        return scores ? JSON.parse(scores) : { level1: 0, level2: 0 };
+        return scores ? JSON.parse(scores) : { level1: 0, level2: 0, level3: 0 };
     } catch (e) {
-        return { level1: 0, level2: 0 };
+        return { level1: 0, level2: 0, level3: 0 };
     }
 }
 
@@ -250,6 +265,7 @@ function selectLevel(level) {
     // Update button states
     document.getElementById('level1-btn').classList.toggle('active', level === 1);
     document.getElementById('level2-btn').classList.toggle('active', level === 2);
+    document.getElementById('level3-btn').classList.toggle('active', level === 3);
     
     // Reset game state
     currentQuestionIndex = 0;
@@ -263,7 +279,7 @@ function selectLevel(level) {
     updateTimerDisplay();
     
     // Set current data based on level
-    currentData = level === 1 ? level1Data : level2Data;
+    currentData = level === 1 ? level1Data : (level === 2 ? level2Data : level3Data);
     
     // Reset UI
     document.getElementById('answer-input').value = '';
@@ -363,13 +379,21 @@ function checkAnswer() {
                 feedback.textContent = `Helaas, de hoofdstad is ${currentQuestion.capital}.`;
             }
         }
-    } else {
+    } else if (currentLevel === 2) {
         // Level 2: waterways
         isCorrect = normalizeAnswer(userAnswer) === normalizeAnswer(currentQuestion.name);
         if (isCorrect) {
             feedback.textContent = `Correct! Het is de ${currentQuestion.name}.`;
         } else {
             feedback.textContent = `Helaas, het juiste antwoord is de ${currentQuestion.name}.`;
+        }
+    } else if (currentLevel === 3) {
+        // Level 3: cities
+        isCorrect = normalizeAnswer(userAnswer) === normalizeAnswer(currentQuestion.name);
+        if (isCorrect) {
+            feedback.textContent = `Correct! Het is ${currentQuestion.name}.`;
+        } else {
+            feedback.textContent = `Helaas, het juiste antwoord is ${currentQuestion.name}.`;
         }
     }
     
@@ -527,6 +551,13 @@ function drawMap() {
         return;
     }
 
+    // If drawing cities (level 3), render cities as points on the northern provinces map
+    if (currentLevel === 3) {
+        renderNorthernCities();
+        setQuestionText();
+        return;
+    }
+
     // SVG defs live in index.html (landPatternBase, waterGradient, waterGlow, shadow)
     
     // For level 1, randomly decide whether to ask for province or capital
@@ -637,6 +668,127 @@ function drawMap() {
                 path.classList.add('highlighted');
             }
         });
+    }
+
+    // Render helper for northern cities (Level 3)
+    async function renderNorthernCities() {
+        // Check if d3 is available before attempting GeoJSON rendering
+        if (typeof d3 === 'undefined') {
+            console.warn('d3.js not loaded, cannot render cities');
+            return;
+        }
+        
+        try {
+            // First, load and render the northern provinces as background
+            const provincesResp = await fetch('assets/provinces.geojson');
+            if (provincesResp.ok) {
+                const provincesGeo = await provincesResp.json();
+                
+                // Filter to only show northern provinces (Groningen, Friesland, Drenthe)
+                const northernProvinces = provincesGeo.features.filter(feat => {
+                    const name = feat.properties.name || feat.properties.NAME || '';
+                    return ['Groningen', 'Friesland', 'Drenthe'].includes(name);
+                });
+                
+                // Create a filtered GeoJSON with only northern provinces
+                const northernProvincesGeo = {
+                    type: 'FeatureCollection',
+                    features: northernProvinces
+                };
+                
+                const width = 700, height = 600;
+                const projection = d3.geoMercator().fitSize([width, height], northernProvincesGeo);
+                const pathGen = d3.geoPath().projection(projection);
+                
+                // Draw provinces as background
+                const tintMap = {
+                    "Groningen": '#c77c6b',
+                    "Friesland": '#d08a6c',
+                    "Drenthe": '#c46f53'
+                };
+                
+                northernProvinces.forEach(feat => {
+                    let name = feat.properties.name || feat.properties.NAME || 'Unknown';
+                    const d = pathGen(feat);
+                    
+                    if (!d) return;
+                    
+                    const tint = tintMap[name] || '#d09a74';
+                    const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                    const base = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    base.setAttribute('d', d);
+                    base.setAttribute('fill', tint);
+                    base.setAttribute('class', 'map-region');
+                    base.setAttribute('data-region', name);
+                    group.appendChild(base);
+                    
+                    // borders
+                    const inner = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    inner.setAttribute('d', d);
+                    inner.setAttribute('fill', 'none');
+                    inner.setAttribute('stroke', '#fff');
+                    inner.setAttribute('stroke-width', '0.9');
+                    inner.setAttribute('pointer-events', 'none');
+                    group.appendChild(inner);
+                    
+                    mapSvg.appendChild(group);
+                });
+                
+                // Now load and render cities
+                const citiesResp = await fetch('assets/northern_cities.geojson');
+                if (citiesResp.ok) {
+                    const citiesGeo = await citiesResp.json();
+                    
+                    citiesGeo.features.forEach(feat => {
+                        const cityName = feat.properties.name;
+                        const coords = projection(feat.geometry.coordinates);
+                        
+                        if (!coords) return;
+                        
+                        const [cx, cy] = coords;
+                        
+                        // Draw city marker (circle)
+                        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                        circle.setAttribute('cx', cx);
+                        circle.setAttribute('cy', cy);
+                        circle.setAttribute('r', '6');
+                        circle.setAttribute('class', 'city-marker');
+                        circle.setAttribute('data-region', cityName);
+                        
+                        // Highlight if this is the current question
+                        if (currentQuestion && normalizeAnswer(cityName) === normalizeAnswer(currentQuestion.name)) {
+                            circle.classList.add('highlighted');
+                            circle.setAttribute('r', '10');
+                        }
+                        
+                        mapSvg.appendChild(circle);
+                        
+                        // Draw city label - show ??? for all cities except show actual name for highlighted city
+                        const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                        label.setAttribute('x', cx);
+                        label.setAttribute('y', cy - 10);
+                        label.setAttribute('text-anchor', 'middle');
+                        label.setAttribute('class', 'city-label');
+                        
+                        // Only show the name for the current question city, hide others with ???
+                        if (currentQuestion && normalizeAnswer(cityName) === normalizeAnswer(currentQuestion.name)) {
+                            label.textContent = '???';
+                            label.classList.add('highlighted');
+                        } else {
+                            label.textContent = '???';
+                        }
+                        
+                        mapSvg.appendChild(label);
+                    });
+                } else {
+                    console.warn('Failed to load northern_cities.geojson');
+                }
+            } else {
+                console.warn('Failed to load provinces.geojson');
+            }
+        } catch (e) {
+            console.error('Error rendering northern cities:', e);
+        }
     }
 
     // Render helper for GeoJSON via D3
@@ -842,8 +994,10 @@ function drawMap() {
                     el.classList.remove('highlighted');
                 });
             }
-        } else {
+        } else if (currentLevel === 2) {
             questionElement.textContent = 'Wat is de naam van het gemarkeerde water?';
+        } else if (currentLevel === 3) {
+            questionElement.textContent = 'Wat is de naam van de gemarkeerde stad?';
         }
     }
     
