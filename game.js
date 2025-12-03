@@ -50,6 +50,35 @@ const level3Data = [
     { name: "Bolsward", province: "Friesland", type: "city", capital: false }
 ];
 
+// City marker styling constants for Level 3
+const CITY_MARKER_STYLES = {
+    normal: {
+        radius: 6,
+        fill: '#333',
+        stroke: '#fff',
+        strokeWidth: 2
+    },
+    highlighted: {
+        radius: 10,
+        fill: '#000',
+        stroke: '#fff',
+        strokeWidth: 3
+    }
+};
+
+const CITY_LABEL_STYLES = {
+    normal: {
+        fontSize: 12,
+        fill: '#333',
+        fontWeight: 'normal'
+    },
+    highlighted: {
+        fontSize: 14,
+        fill: '#000',
+        fontWeight: 'bold'
+    }
+};
+
 // Game state
 let currentLevel = 1;
 let currentQuestionIndex = 0;
@@ -283,7 +312,12 @@ function selectLevel(level) {
     updateTimerDisplay();
     
     // Set current data based on level
-    currentData = level === 1 ? level1Data : (level === 2 ? level2Data : level3Data);
+    const levelDataMap = {
+        1: level1Data,
+        2: level2Data,
+        3: level3Data
+    };
+    currentData = levelDataMap[level] || level1Data;
     
     // Reset UI
     document.getElementById('answer-input').value = '';
@@ -684,12 +718,12 @@ function drawMap() {
         try {
             // Load the province boundaries for Groningen and Friesland
             const provincesResp = await fetch('assets/groningen_friesland_provinces.geojson');
-            if (!provincesResp.ok) throw new Error('Failed to load provinces');
+            if (!provincesResp.ok) throw new Error(`Failed to load provinces: ${provincesResp.status} ${provincesResp.statusText} (${provincesResp.url})`);
             const provinces = await provincesResp.json();
 
             // Load the cities data
             const citiesResp = await fetch('assets/groningen_friesland_cities.geojson');
-            if (!citiesResp.ok) throw new Error('Failed to load cities');
+            if (!citiesResp.ok) throw new Error(`Failed to load cities: ${citiesResp.status} ${citiesResp.statusText} (${citiesResp.url})`);
             const cities = await citiesResp.json();
 
             const width = 700, height = 600;
@@ -740,42 +774,39 @@ function drawMap() {
                 if (!coords) return;
 
                 const [x, y] = coords;
+                const isHighlighted = currentQuestion && normalizeAnswer(cityName) === normalizeAnswer(currentQuestion.name);
 
                 // Create city marker group
                 const cityGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
                 cityGroup.setAttribute('data-city', cityName);
 
-                // City marker circle
+                // City marker circle - use style constants
+                const markerStyle = isHighlighted ? CITY_MARKER_STYLES.highlighted : CITY_MARKER_STYLES.normal;
                 const marker = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                 marker.setAttribute('cx', x);
                 marker.setAttribute('cy', y);
-                marker.setAttribute('r', '6');
+                marker.setAttribute('r', markerStyle.radius);
                 marker.setAttribute('class', 'city-marker');
-                marker.setAttribute('fill', '#333');
-                marker.setAttribute('stroke', '#fff');
-                marker.setAttribute('stroke-width', '2');
+                marker.setAttribute('fill', markerStyle.fill);
+                marker.setAttribute('stroke', markerStyle.stroke);
+                marker.setAttribute('stroke-width', markerStyle.strokeWidth);
+                if (isHighlighted) {
+                    marker.classList.add('highlighted');
+                }
 
-                // City label
+                // City label - use style constants
+                const labelStyle = isHighlighted ? CITY_LABEL_STYLES.highlighted : CITY_LABEL_STYLES.normal;
                 const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                 label.setAttribute('x', x);
                 label.setAttribute('y', y + 18);
                 label.setAttribute('text-anchor', 'middle');
                 label.setAttribute('class', 'city-label');
-                label.setAttribute('font-size', '12');
-                label.setAttribute('fill', '#333');
+                label.setAttribute('font-size', labelStyle.fontSize);
+                label.setAttribute('fill', labelStyle.fill);
+                label.setAttribute('font-weight', labelStyle.fontWeight);
                 label.textContent = cityName;
-
-                cityGroup.appendChild(marker);
-                cityGroup.appendChild(label);
-
-                // Highlight if this is the current question
-                if (currentQuestion && normalizeAnswer(cityName) === normalizeAnswer(currentQuestion.name)) {
-                    marker.classList.add('highlighted');
-                    marker.setAttribute('r', '10');
-                    marker.setAttribute('fill', '#000');
+                if (isHighlighted) {
                     label.classList.add('highlighted');
-                    label.setAttribute('fill', '#000');
-                    label.setAttribute('font-weight', 'bold');
                 }
 
                 mapSvg.appendChild(cityGroup);

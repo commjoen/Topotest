@@ -492,8 +492,9 @@ footer a:hover {
 }
 
 .city-marker:hover {
-    r: 8;
     fill: #555;
+    transform: scale(1.3);
+    transform-origin: center;
 }
 
 .city-marker.highlighted {
