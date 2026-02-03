@@ -178,14 +178,18 @@ const waterwayPaths = {
 
 // Embedded water polygon paths (for lakes, seas, estuaries) - rendered as filled shapes
 const waterPolygonPaths = {
-    "Markermeer": "M 305,260 L 320,240 L 360,220 L 400,225 L 390,245 L 350,260 L 305,260 Z",
     "IJsselmeer": "M 305,220 L 340,190 L 390,160 L 450,145 L 490,155 L 470,185 L 410,205 L 350,220 L 305,220 Z",
+    "Markermeer": "M 305,260 L 320,240 L 360,220 L 400,225 L 390,245 L 350,260 L 305,260 Z",
     "Waddenzee": "M 35.9,107.1 L 161.5,64.3 L 341.0,21.4 L 556.4,21.4 L 664.1,64.3 L 628.2,107.1 L 484.6,117.9 L 215.4,117.9 L 35.9,107.1 Z",
     "Oosterschelde": "M 89.7,407.1 L 143.6,396.4 L 179.5,385.7 L 215.4,385.7 L 233.3,396.4 L 197.4,407.1 L 89.7,407.1 Z",
     "Westerschelde": "M 35.9,492.9 L 107.7,471.4 L 161.5,450.0 L 215.4,439.3 L 233.3,450.0 L 143.6,482.1 L 35.9,492.9 Z",
     "Lek": "M 320,308 L 350,309 L 380,310 L 410,311 L 440,312 L 440,324 L 410,323 L 380,322 L 350,321 L 320,320 Z",
     "Noordzeekanaal": "M 170,215 L 220,217 L 270,219 L 320,220 L 320,232 L 270,230 L 220,228 L 170,226 Z"
 };
+
+// SVG path for Twente region (used in Level 4 fallback rendering)
+const TWENTE_REGION_PATH = "M 580,200 L 700,200 L 700,320 L 580,320 Z";
+
 
 // Use the simplified embedded provinces GeoJSON (kept small for offline/file:// use)
 const EMBEDDED_PROVINCES = {
@@ -961,10 +965,9 @@ function drawMap() {
             mapSvg.appendChild(label);
         });
         
-        // Draw Twente region outline (simplified)
-        const twentePath = "M 580,200 L 700,200 L 700,320 L 580,320 Z";
+        // Draw Twente region outline (simplified rectangular boundary)
         const regionPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        regionPath.setAttribute('d', twentePath);
+        regionPath.setAttribute('d', TWENTE_REGION_PATH);
         regionPath.setAttribute('class', 'map-region-highlight');
         regionPath.setAttribute('fill', 'none');
         regionPath.setAttribute('stroke', '#ff9900');
