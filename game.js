@@ -65,7 +65,10 @@ const level4Data = [
     { name: "IJssel", type: "river" },
     { name: "Waal", type: "river" },
     { name: "Maas", type: "river" },
-    { name: "Neder-Rijn", type: "river" }
+    { name: "Neder-Rijn", type: "river" },
+    { name: "IJsselmeer", type: "lake" },
+    { name: "Markermeer", type: "lake" },
+    { name: "Twente", type: "region" }
 ];
 
 // Game state
@@ -954,6 +957,51 @@ function drawMap() {
                             }
                             
                             mapSvg.appendChild(path);
+                        } else if (itemType === 'lake') {
+                            // Draw lake as a polygon
+                            const d = pathGen(feat);
+                            if (!d) return;
+                            
+                            const lakePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                            lakePath.setAttribute('d', d);
+                            lakePath.setAttribute('class', 'map-waterbody');
+                            lakePath.setAttribute('fill', 'url(#waterGradient)');
+                            lakePath.setAttribute('opacity', '0.7');
+                            lakePath.setAttribute('stroke', '#176fb0');
+                            lakePath.setAttribute('stroke-width', '2');
+                            lakePath.setAttribute('data-region', itemName);
+                            
+                            // Highlight if this is the current question
+                            if (currentQuestion && normalizeAnswer(itemName) === normalizeAnswer(currentQuestion.name)) {
+                                lakePath.classList.add('highlighted');
+                                lakePath.setAttribute('opacity', '0.95');
+                            }
+                            
+                            mapSvg.appendChild(lakePath);
+                        } else if (itemType === 'region') {
+                            // Draw region (like Twente) as a highlighted area
+                            const d = pathGen(feat);
+                            if (!d) return;
+                            
+                            const regionPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                            regionPath.setAttribute('d', d);
+                            regionPath.setAttribute('class', 'map-region-highlight');
+                            regionPath.setAttribute('fill', 'none');
+                            regionPath.setAttribute('stroke', '#ff9900');
+                            regionPath.setAttribute('stroke-width', '3');
+                            regionPath.setAttribute('stroke-dasharray', '10,5');
+                            regionPath.setAttribute('opacity', '0.6');
+                            regionPath.setAttribute('data-region', itemName);
+                            
+                            // Highlight if this is the current question
+                            if (currentQuestion && normalizeAnswer(itemName) === normalizeAnswer(currentQuestion.name)) {
+                                regionPath.classList.add('highlighted');
+                                regionPath.setAttribute('fill', 'rgba(255, 153, 0, 0.15)');
+                                regionPath.setAttribute('opacity', '1.0');
+                                regionPath.setAttribute('stroke-width', '5');
+                            }
+                            
+                            mapSvg.appendChild(regionPath);
                         }
                     });
                 } else {
