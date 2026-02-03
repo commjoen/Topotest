@@ -115,7 +115,41 @@
         </footer>
     </div>
 
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script>
+        // Try to load d3.js from multiple CDN sources
+        (function() {
+            const cdnSources = [
+                'https://d3js.org/d3.v7.min.js',
+                'https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js',
+                'https://unpkg.com/d3@7/dist/d3.min.js'
+            ];
+            
+            let loaded = false;
+            let currentIndex = 0;
+            
+            function tryLoadD3() {
+                if (currentIndex >= cdnSources.length) {
+                    console.warn('All d3.js CDN sources failed to load. Level 3 and 4 will use fallback rendering.');
+                    return;
+                }
+                
+                const script = document.createElement('script');
+                script.src = cdnSources[currentIndex];
+                script.onload = function() {
+                    loaded = true;
+                    console.log('d3.js loaded successfully from:', cdnSources[currentIndex]);
+                };
+                script.onerror = function() {
+                    console.warn('Failed to load d3.js from:', cdnSources[currentIndex]);
+                    currentIndex++;
+                    tryLoadD3();
+                };
+                document.head.appendChild(script);
+            }
+            
+            tryLoadD3();
+        })();
+    </script>
     <script src="game.js"></script>
 </body>
 </html>
