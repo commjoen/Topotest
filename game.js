@@ -410,8 +410,8 @@ function checkAnswer() {
         } else {
             feedback.textContent = `Helaas, het juiste antwoord is de ${currentQuestion.name}.`;
         }
-    } else if (currentLevel === 3) {
-        // Level 3: cities
+    } else if (currentLevel === 3 || currentLevel === 4) {
+        // Level 3: northern cities; Level 4: eastern cities and rivers
         isCorrect = normalizeAnswer(userAnswer) === normalizeAnswer(currentQuestion.name);
         if (isCorrect) {
             feedback.textContent = `Correct! Het is ${currentQuestion.name}.`;
