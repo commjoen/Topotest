@@ -73,9 +73,18 @@ In dit level leren kinderen de namen van belangrijke steden in de noordelijke pr
 - **Groningen**: Groningen, Delfzijl, Veendam
 - **Drenthe**: Assen, Meppel, Hoogeveen, Emmen
 
+### Level 4: Oostelijke Steden & Rivieren
+In dit level leren kinderen de namen van steden, rivieren en regio's in de oostelijke provincies:
+- **Steden in Overijssel**: Kampen, Zwolle, Almelo, Hengelo, Enschede, Deventer
+- **Steden in Flevoland**: Emmeloord, Lelystad, Almere
+- **Steden in Gelderland**: Zutphen, Doetinchem, Arnhem, Wageningen, Nijmegen
+- **Rivieren**: IJssel, Waal, Maas, Neder-Rijn
+- **Wateren**: IJsselmeer, Markermeer
+- **Regio**: Twente
+
 ## Hoe te gebruiken
 1. Open `index.html` in een webbrowser
-2. Kies een level (Level 1 of Level 2)
+2. Kies een level (Level 1, 2, 3, of 4)
 3. Klik op "Start Spel"
 4. Bekijk de gemarkeerde regio op de kaart
 5. Voer de naam in van de gemarkeerde regio
