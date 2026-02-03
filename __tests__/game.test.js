@@ -220,6 +220,31 @@ describe('Topotest Game Tests', () => {
       expect(sampleCity.type).toBe('city');
       expect(['Friesland', 'Groningen', 'Drenthe']).toContain(sampleCity.province);
     });
+
+    test('level 4 city data should have correct structure', () => {
+      const sampleEasternCity = {
+        name: 'Zwolle',
+        region: 'Overijssel',
+        type: 'city'
+      };
+      
+      expect(sampleEasternCity).toHaveProperty('name');
+      expect(sampleEasternCity).toHaveProperty('region');
+      expect(sampleEasternCity).toHaveProperty('type');
+      expect(sampleEasternCity.type).toBe('city');
+      expect(['Overijssel', 'Flevoland', 'Gelderland']).toContain(sampleEasternCity.region);
+    });
+
+    test('level 4 river data should have correct structure', () => {
+      const sampleRiver = {
+        name: 'IJssel',
+        type: 'river'
+      };
+      
+      expect(sampleRiver).toHaveProperty('name');
+      expect(sampleRiver).toHaveProperty('type');
+      expect(sampleRiver.type).toBe('river');
+    });
   });
 
   describe('Score Calculation', () => {
@@ -239,16 +264,16 @@ describe('Topotest Game Tests', () => {
     const getHighScores = () => {
       try {
         const scores = localStorage.getItem('topotest-highscores');
-        return scores ? JSON.parse(scores) : { level1: 0, level2: 0 };
+        return scores ? JSON.parse(scores) : { level1: 0, level2: 0, level3: 0, level4: 0 };
       } catch (e) {
-        return { level1: 0, level2: 0 };
+        return { level1: 0, level2: 0, level3: 0, level4: 0 };
       }
     };
 
     const saveHighScore = (level, score) => {
       try {
         const scores = localStorage.getItem('topotest-highscores');
-        const highScores = scores ? JSON.parse(scores) : { level1: 0, level2: 0 };
+        const highScores = scores ? JSON.parse(scores) : { level1: 0, level2: 0, level3: 0, level4: 0 };
         const key = `level${level}`;
         if (score > highScores[key]) {
           highScores[key] = score;
@@ -268,7 +293,7 @@ describe('Topotest Game Tests', () => {
 
     test('should initialize with zero scores', () => {
       const scores = getHighScores();
-      expect(scores).toEqual({ level1: 0, level2: 0 });
+      expect(scores).toEqual({ level1: 0, level2: 0, level3: 0, level4: 0 });
     });
 
     test('should save high score for level 1', () => {

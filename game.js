@@ -46,6 +46,28 @@ const level3Data = [
     { name: "Emmen", province: "Drenthe", type: "city" }
 ];
 
+// Game data for Level 4: Eastern Province Cities & Rivers
+const level4Data = [
+    { name: "Emmeloord", region: "Flevoland", type: "city" },
+    { name: "Kampen", region: "Overijssel", type: "city" },
+    { name: "Zwolle", region: "Overijssel", type: "city" },
+    { name: "Almelo", region: "Overijssel", type: "city" },
+    { name: "Hengelo", region: "Overijssel", type: "city" },
+    { name: "Enschede", region: "Overijssel", type: "city" },
+    { name: "Deventer", region: "Overijssel", type: "city" },
+    { name: "Lelystad", region: "Flevoland", type: "city" },
+    { name: "Almere", region: "Flevoland", type: "city" },
+    { name: "Zutphen", region: "Gelderland", type: "city" },
+    { name: "Doetinchem", region: "Gelderland", type: "city" },
+    { name: "Arnhem", region: "Gelderland", type: "city" },
+    { name: "Wageningen", region: "Gelderland", type: "city" },
+    { name: "Nijmegen", region: "Gelderland", type: "city" },
+    { name: "IJssel", type: "river" },
+    { name: "Waal", type: "river" },
+    { name: "Maas", type: "river" },
+    { name: "Neder-Rijn", type: "river" }
+];
+
 // Game state
 let currentLevel = 1;
 let currentQuestionIndex = 0;
@@ -63,9 +85,9 @@ let questionLimit = 'all';
 function getHighScores() {
     try {
         const scores = localStorage.getItem('topotest-highscores');
-        return scores ? JSON.parse(scores) : { level1: 0, level2: 0, level3: 0 };
+        return scores ? JSON.parse(scores) : { level1: 0, level2: 0, level3: 0, level4: 0 };
     } catch (e) {
-        return { level1: 0, level2: 0, level3: 0 };
+        return { level1: 0, level2: 0, level3: 0, level4: 0 };
     }
 }
 
@@ -266,6 +288,7 @@ function selectLevel(level) {
     document.getElementById('level1-btn').classList.toggle('active', level === 1);
     document.getElementById('level2-btn').classList.toggle('active', level === 2);
     document.getElementById('level3-btn').classList.toggle('active', level === 3);
+    document.getElementById('level4-btn').classList.toggle('active', level === 4);
     
     // Reset game state
     currentQuestionIndex = 0;
@@ -279,7 +302,7 @@ function selectLevel(level) {
     updateTimerDisplay();
     
     // Set current data based on level
-    currentData = level === 1 ? level1Data : (level === 2 ? level2Data : level3Data);
+    currentData = level === 1 ? level1Data : (level === 2 ? level2Data : (level === 3 ? level3Data : level4Data));
     
     // Reset UI
     document.getElementById('answer-input').value = '';
@@ -558,6 +581,13 @@ function drawMap() {
         return;
     }
 
+    // If drawing eastern cities and rivers (level 4), render cities and rivers
+    if (currentLevel === 4) {
+        renderEasternCitiesAndRivers();
+        setQuestionText();
+        return;
+    }
+
     // SVG defs live in index.html (landPatternBase, waterGradient, waterGlow, shadow)
     
     // For level 1, randomly decide whether to ask for province or capital
@@ -788,6 +818,152 @@ function drawMap() {
             }
         } catch (e) {
             console.error('Error rendering northern cities:', e);
+        }
+    }
+
+    // Render helper for eastern cities and rivers (Level 4)
+    async function renderEasternCitiesAndRivers() {
+        // Check if d3 is available before attempting GeoJSON rendering
+        if (typeof d3 === 'undefined') {
+            console.warn('d3.js not loaded, cannot render eastern cities and rivers');
+            return;
+        }
+        
+        try {
+            // First, load and render the eastern provinces as background (Overijssel, Flevoland, Gelderland)
+            const provincesResp = await fetch('assets/provinces.geojson');
+            if (provincesResp.ok) {
+                const provincesGeo = await provincesResp.json();
+                
+                // Filter to only show eastern provinces
+                const easternProvinces = provincesGeo.features.filter(feat => {
+                    const name = feat.properties.name || feat.properties.NAME || '';
+                    return ['Overijssel', 'Flevoland', 'Gelderland'].includes(name);
+                });
+                
+                // Create a filtered GeoJSON with only eastern provinces
+                const easternProvincesGeo = {
+                    type: 'FeatureCollection',
+                    features: easternProvinces
+                };
+                
+                const width = 700, height = 600;
+                const projection = d3.geoMercator().fitSize([width, height], easternProvincesGeo);
+                const pathGen = d3.geoPath().projection(projection);
+                
+                // Draw provinces as background
+                const tintMap = {
+                    "Overijssel": '#d89b75',
+                    "Flevoland": '#e0ad86',
+                    "Gelderland": '#b96447'
+                };
+                
+                easternProvinces.forEach(feat => {
+                    let name = feat.properties.name || feat.properties.NAME || 'Unknown';
+                    const d = pathGen(feat);
+                    
+                    if (!d) return;
+                    
+                    const tint = tintMap[name] || '#d09a74';
+                    const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                    const base = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    base.setAttribute('d', d);
+                    base.setAttribute('fill', tint);
+                    base.setAttribute('class', 'map-region');
+                    base.setAttribute('data-region', name);
+                    group.appendChild(base);
+                    
+                    // borders
+                    const inner = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    inner.setAttribute('d', d);
+                    inner.setAttribute('fill', 'none');
+                    inner.setAttribute('stroke', '#fff');
+                    inner.setAttribute('stroke-width', '0.9');
+                    inner.setAttribute('pointer-events', 'none');
+                    group.appendChild(inner);
+                    
+                    mapSvg.appendChild(group);
+                });
+                
+                // Now load and render cities and rivers
+                const dataResp = await fetch('assets/eastern_cities_rivers.geojson');
+                if (dataResp.ok) {
+                    const dataGeo = await dataResp.json();
+                    
+                    dataGeo.features.forEach(feat => {
+                        const itemName = feat.properties.name;
+                        const itemType = feat.properties.type;
+                        
+                        if (itemType === 'city') {
+                            // Draw city marker
+                            const coords = projection(feat.geometry.coordinates);
+                            if (!coords) return;
+                            
+                            const [cx, cy] = coords;
+                            
+                            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                            circle.setAttribute('cx', cx);
+                            circle.setAttribute('cy', cy);
+                            circle.setAttribute('r', '6');
+                            circle.setAttribute('class', 'city-marker');
+                            circle.setAttribute('data-region', itemName);
+                            
+                            // Highlight if this is the current question
+                            if (currentQuestion && normalizeAnswer(itemName) === normalizeAnswer(currentQuestion.name)) {
+                                circle.classList.add('highlighted');
+                                circle.setAttribute('r', '10');
+                            }
+                            
+                            mapSvg.appendChild(circle);
+                            
+                            // Draw city label
+                            const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                            label.setAttribute('x', cx);
+                            label.setAttribute('y', cy - 10);
+                            label.setAttribute('text-anchor', 'middle');
+                            label.setAttribute('class', 'city-label');
+                            label.textContent = '???';
+                            
+                            if (currentQuestion && normalizeAnswer(itemName) === normalizeAnswer(currentQuestion.name)) {
+                                label.classList.add('highlighted');
+                            }
+                            
+                            mapSvg.appendChild(label);
+                        } else if (itemType === 'river') {
+                            // Draw river as a line
+                            const pathData = feat.geometry.coordinates.map((coord, i) => {
+                                const projCoord = projection(coord);
+                                if (!projCoord) return '';
+                                return `${i === 0 ? 'M' : 'L'} ${projCoord[0]} ${projCoord[1]}`;
+                            }).join(' ');
+                            
+                            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                            path.setAttribute('d', pathData);
+                            path.setAttribute('class', 'map-waterway');
+                            path.setAttribute('fill', 'none');
+                            path.setAttribute('stroke', 'url(#waterGradient)');
+                            path.setAttribute('stroke-width', '8');
+                            path.setAttribute('filter', 'url(#waterGlow)');
+                            path.setAttribute('stroke-linecap', 'round');
+                            path.setAttribute('stroke-linejoin', 'round');
+                            path.setAttribute('data-region', itemName);
+                            
+                            // Highlight if this is the current question
+                            if (currentQuestion && normalizeAnswer(itemName) === normalizeAnswer(currentQuestion.name)) {
+                                path.classList.add('highlighted');
+                            }
+                            
+                            mapSvg.appendChild(path);
+                        }
+                    });
+                } else {
+                    console.warn('Failed to load eastern_cities_rivers.geojson');
+                }
+            } else {
+                console.warn('Failed to load provinces.geojson');
+            }
+        } catch (e) {
+            console.error('Error rendering eastern cities and rivers:', e);
         }
     }
 
