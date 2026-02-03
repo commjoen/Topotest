@@ -418,6 +418,14 @@ function checkAnswer() {
         } else {
             feedback.textContent = `Helaas, het juiste antwoord is ${currentQuestion.name}.`;
         }
+    } else if (currentLevel === 4) {
+        // Level 4: eastern cities and rivers
+        isCorrect = normalizeAnswer(userAnswer) === normalizeAnswer(currentQuestion.name);
+        if (isCorrect) {
+            feedback.textContent = `Correct! Het is ${currentQuestion.name}.`;
+        } else {
+            feedback.textContent = `Helaas, het juiste antwoord is ${currentQuestion.name}.`;
+        }
     }
     
     if (isCorrect) {
