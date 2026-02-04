@@ -451,8 +451,8 @@ header h1 {
     .controls { flex-direction: column; gap: 12px; }
     .controls button, .level-btn { width: 100%; padding: 14px 18px; }
     
-    /* Keep start and next buttons 20% smaller */
-    #start-btn, #next-btn { padding: 11.2px 14.4px; }
+    /* Start and next buttons remain 20% smaller (relative to mobile default 14px 18px) */
+    #start-btn, #next-btn { padding: calc(14px * 0.8) calc(18px * 0.8); }
 
     #answer-input { font-size: 1.05em; padding: 12px; }
 }
@@ -508,9 +508,10 @@ button {
     color: white;
 }
 
+/* Start and Next buttons are 20% smaller for a more compact UI */
 #start-btn, #next-btn {
-    padding: 12px 24px;
-    font-size: 0.88em;
+    padding: 12px 24px;  /* 20% smaller than default 15px 30px */
+    font-size: 0.88em;   /* 20% smaller than default 1.1em */
 }
 
 #start-btn:hover, #next-btn:hover, #restart-btn:hover {
