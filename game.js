@@ -287,6 +287,35 @@ function updateTimerDisplay() {
     }
 }
 
+// Map zoom state
+let currentZoom = 1;
+const MIN_ZOOM = 0.5;
+const MAX_ZOOM = 3;
+const ZOOM_STEP = 0.25;
+
+// Zoom functions
+function zoomIn() {
+    currentZoom = Math.min(MAX_ZOOM, currentZoom + ZOOM_STEP);
+    applyZoom();
+}
+
+function zoomOut() {
+    currentZoom = Math.max(MIN_ZOOM, currentZoom - ZOOM_STEP);
+    applyZoom();
+}
+
+function resetZoom() {
+    currentZoom = 1;
+    applyZoom();
+}
+
+function applyZoom() {
+    const mapElement = document.getElementById('map');
+    if (mapElement) {
+        mapElement.style.transform = `scale(${currentZoom})`;
+    }
+}
+
 // Select level
 function selectLevel(level) {
     currentLevel = level;
@@ -296,6 +325,12 @@ function selectLevel(level) {
     document.getElementById('level2-btn').classList.toggle('active', level === 2);
     document.getElementById('level3-btn').classList.toggle('active', level === 3);
     document.getElementById('level4-btn').classList.toggle('active', level === 4);
+    
+    // Update dropdown selection
+    const dropdown = document.getElementById('level-dropdown');
+    if (dropdown) {
+        dropdown.value = level.toString();
+    }
     
     // Reset game state
     currentQuestionIndex = 0;

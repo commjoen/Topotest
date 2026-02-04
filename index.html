@@ -28,6 +28,16 @@
                     Level 4: Oostelijke Steden & Rivieren
                 </button>
             </div>
+            
+            <div class="level-selector-mobile">
+                <label for="level-dropdown">Kies Level:</label>
+                <select id="level-dropdown" class="level-dropdown" onchange="selectLevel(parseInt(this.value))">
+                    <option value="1">Level 1: Provincies & Hoofdsteden</option>
+                    <option value="2">Level 2: Wateren</option>
+                    <option value="3">Level 3: Noordelijke Steden</option>
+                    <option value="4">Level 4: Oostelijke Steden & Rivieren</option>
+                </select>
+            </div>
 
             <div class="settings-container">
                 <div class="setting">
@@ -57,6 +67,11 @@
             </div>
 
             <div class="map-container">
+                <div class="map-zoom-controls">
+                    <button id="zoom-in-btn" class="zoom-btn" onclick="zoomIn()" title="Zoom in">+</button>
+                    <button id="zoom-out-btn" class="zoom-btn" onclick="zoomOut()" title="Zoom uit">−</button>
+                    <button id="zoom-reset-btn" class="zoom-btn" onclick="resetZoom()" title="Reset zoom">⊙</button>
+                </div>
                 <svg id="map" viewBox="0 0 700 600" preserveAspectRatio="xMidYMid meet">
                     <defs>
                         <!-- Land gradient used as base for patterns -->
