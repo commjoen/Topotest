@@ -447,9 +447,32 @@ header h1 {
 
     #map { max-height: 100%; }
 
-    /* Make control buttons full width on small screens */
-    .controls { flex-direction: column; gap: 12px; }
-    .controls button, .level-btn { width: 100%; padding: 14px 18px; }
+    /* Make control buttons full width on small screens, except submit and next which are side-by-side */
+    .controls { 
+        flex-direction: row; 
+        gap: 8px; 
+        flex-wrap: wrap;
+    }
+    
+    .controls button { 
+        padding: 14px 18px; 
+    }
+    
+    /* Start and restart buttons are full width */
+    #start-btn, #restart-btn { 
+        width: 100%; 
+    }
+    
+    /* Submit and next buttons are side-by-side, each taking roughly half width */
+    #submit-btn, #next-btn { 
+        flex: 1; 
+        min-width: 0;
+    }
+    
+    .level-btn { 
+        width: 100%; 
+        padding: 14px 18px; 
+    }
 
     #answer-input { font-size: 1.05em; padding: 12px; }
 }
