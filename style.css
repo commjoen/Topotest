@@ -621,4 +621,8 @@ footer a:hover {
         grid-column: 1 / span 1;
         padding: 10px 12px;
     }
+    
+    .controls {
+        grid-column: 1 / span 1;
+    }
 }
