@@ -249,6 +249,8 @@ header h1 {
     display: block;
     /* limit max height so the map does not push controls offscreen */
     max-height: 100%;
+    transform-origin: center center;
+    transition: transform 0.3s ease;
 }
 
 .map-region {

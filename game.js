@@ -313,8 +313,6 @@ function applyZoom() {
     const mapElement = document.getElementById('map');
     if (mapElement) {
         mapElement.style.transform = `scale(${currentZoom})`;
-        mapElement.style.transformOrigin = 'center center';
-        mapElement.style.transition = 'transform 0.3s ease';
     }
 }
 
