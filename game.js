@@ -62,13 +62,15 @@ const level4Data = [
     { name: "Arnhem", region: "Gelderland", type: "city" },
     { name: "Wageningen", region: "Gelderland", type: "city" },
     { name: "Nijmegen", region: "Gelderland", type: "city" },
+    { name: "Apeldoorn", region: "Gelderland", type: "city" },
     { name: "IJssel", type: "river" },
     { name: "Waal", type: "river" },
     { name: "Maas", type: "river" },
     { name: "Neder-Rijn", type: "river" },
     { name: "IJsselmeer", type: "lake" },
     { name: "Markermeer", type: "lake" },
-    { name: "Twente", type: "region" }
+    { name: "Twente", type: "region" },
+    { name: "Veluwe", type: "region" }
 ];
 
 // Game state

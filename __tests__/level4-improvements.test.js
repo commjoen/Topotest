@@ -23,13 +23,15 @@ describe('Level 4 Improvements', () => {
       { name: "Arnhem", region: "Gelderland", type: "city" },
       { name: "Wageningen", region: "Gelderland", type: "city" },
       { name: "Nijmegen", region: "Gelderland", type: "city" },
+      { name: "Apeldoorn", region: "Gelderland", type: "city" },
       { name: "IJssel", type: "river" },
       { name: "Waal", type: "river" },
       { name: "Maas", type: "river" },
       { name: "Neder-Rijn", type: "river" },
       { name: "IJsselmeer", type: "lake" },
       { name: "Markermeer", type: "lake" },
-      { name: "Twente", type: "region" }
+      { name: "Twente", type: "region" },
+      { name: "Veluwe", type: "region" }
     ];
   });
 
@@ -53,10 +55,13 @@ describe('Level 4 Improvements', () => {
     expect(lakeNames).toContain('Markermeer');
   });
 
-  test('Level 4 should include Twente region', () => {
+  test('Level 4 should include Twente and Veluwe regions', () => {
     const regions = level4Data.filter(item => item.type === 'region');
-    expect(regions).toHaveLength(1);
-    expect(regions[0].name).toBe('Twente');
+    expect(regions).toHaveLength(2);
+    
+    const regionNames = regions.map(r => r.name);
+    expect(regionNames).toContain('Twente');
+    expect(regionNames).toContain('Veluwe');
   });
 
   test('Level 4 should include Twente cities (Almelo, Hengelo, Enschede)', () => {
@@ -69,8 +74,15 @@ describe('Level 4 Improvements', () => {
     expect(cityNames).toContain('Enschede');
   });
 
-  test('Level 4 should have 21 total items', () => {
-    expect(level4Data).toHaveLength(21);
+  test('Level 4 should include Apeldoorn city', () => {
+    const cities = level4Data.filter(item => item.type === 'city');
+    const cityNames = cities.map(c => c.name);
+    
+    expect(cityNames).toContain('Apeldoorn');
+  });
+
+  test('Level 4 should have 23 total items', () => {
+    expect(level4Data).toHaveLength(23);
   });
 
   test('GeoJSON file should be valid JSON', () => {
@@ -136,5 +148,33 @@ describe('Level 4 Improvements', () => {
     expect(twente).toBeDefined();
     expect(twente.properties.type).toBe('region');
     expect(twente.geometry.type).toBe('Polygon');
+  });
+
+  test('GeoJSON should include Veluwe region as polygon', () => {
+    const fs = require('fs');
+    const path = require('path');
+    const geojsonPath = path.join(__dirname, '../assets/eastern_cities_rivers.geojson');
+    
+    const content = fs.readFileSync(geojsonPath, 'utf8');
+    const geojson = JSON.parse(content);
+    
+    const veluwe = geojson.features.find(f => f.properties.name === 'Veluwe');
+    expect(veluwe).toBeDefined();
+    expect(veluwe.properties.type).toBe('region');
+    expect(veluwe.geometry.type).toBe('Polygon');
+  });
+
+  test('GeoJSON should include Apeldoorn city as point', () => {
+    const fs = require('fs');
+    const path = require('path');
+    const geojsonPath = path.join(__dirname, '../assets/eastern_cities_rivers.geojson');
+    
+    const content = fs.readFileSync(geojsonPath, 'utf8');
+    const geojson = JSON.parse(content);
+    
+    const apeldoorn = geojson.features.find(f => f.properties.name === 'Apeldoorn');
+    expect(apeldoorn).toBeDefined();
+    expect(apeldoorn.properties.type).toBe('city');
+    expect(apeldoorn.geometry.type).toBe('Point');
   });
 });
