@@ -77,10 +77,10 @@ In dit level leren kinderen de namen van belangrijke steden in de noordelijke pr
 In dit level leren kinderen de namen van steden, rivieren en regio's in de oostelijke provincies:
 - **Steden in Overijssel**: Kampen, Zwolle, Almelo, Hengelo, Enschede, Deventer
 - **Steden in Flevoland**: Emmeloord, Lelystad, Almere
-- **Steden in Gelderland**: Zutphen, Doetinchem, Arnhem, Wageningen, Nijmegen
+- **Steden in Gelderland**: Zutphen, Doetinchem, Arnhem, Wageningen, Nijmegen, Apeldoorn
 - **Rivieren**: IJssel, Waal, Maas, Neder-Rijn
 - **Wateren**: IJsselmeer, Markermeer
-- **Regio**: Twente
+- **Regio's**: Twente, Veluwe
 
 ## Hoe te gebruiken
 1. Open `index.html` in een webbrowser

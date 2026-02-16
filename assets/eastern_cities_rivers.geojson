@@ -158,6 +158,17 @@
     {
       "type": "Feature",
       "properties": {
+        "name": "Apeldoorn",
+        "type": "city"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [5.9699, 52.2112]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "name": "IJssel",
         "type": "river"
       },
@@ -320,6 +331,25 @@
             [7.1, 52.05],
             [6.4, 52.05],
             [6.4, 52.50]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Veluwe",
+        "type": "region"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [5.5, 52.45],
+            [6.2, 52.45],
+            [6.2, 52.05],
+            [5.5, 52.05],
+            [5.5, 52.45]
           ]
         ]
       }
