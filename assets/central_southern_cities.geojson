@@ -37,6 +37,17 @@
     {
       "type": "Feature",
       "properties": {
+        "name": "Breda",
+        "type": "city"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [4.7758, 51.5888]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "name": "Roosendaal",
         "type": "city"
       },
