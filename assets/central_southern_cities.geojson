@@ -1,0 +1,266 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Utrecht",
+        "type": "city"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [5.1214, 52.0907]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Amersfoort",
+        "type": "city"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [5.3878, 52.1561]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Bergen op Zoom",
+        "type": "city"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [4.2864, 51.4975]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Roosendaal",
+        "type": "city"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [4.4614, 51.5328]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Tilburg",
+        "type": "city"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [5.0913, 51.5555]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Oss",
+        "type": "city"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [5.5191, 51.7698]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "'s-Hertogenbosch",
+        "type": "city"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [5.3086, 51.6978]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Eindhoven",
+        "type": "city"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [5.4697, 51.4416]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Helmond",
+        "type": "city"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [5.6614, 51.4823]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Venlo",
+        "type": "city"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [6.1725, 51.3702]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Roermond",
+        "type": "city"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [5.9875, 51.1943]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Maastricht",
+        "type": "city"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [5.6909, 50.8514]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Heerlen",
+        "type": "city"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [5.9837, 50.8880]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Amsterdam-Rijnkanaal",
+        "type": "canal"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [4.91, 52.37],
+          [4.93, 52.30],
+          [4.97, 52.22],
+          [5.00, 52.15],
+          [5.04, 52.08],
+          [5.08, 52.01],
+          [5.13, 51.96],
+          [5.26, 51.91],
+          [5.40, 51.89]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Maas",
+        "type": "river"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [5.73, 50.85],
+          [5.78, 50.94],
+          [5.85, 51.05],
+          [5.90, 51.16],
+          [5.97, 51.27],
+          [6.00, 51.38],
+          [6.13, 51.40],
+          [6.06, 51.50],
+          [5.91, 51.55],
+          [5.72, 51.63],
+          [5.52, 51.72],
+          [5.33, 51.73],
+          [5.15, 51.70],
+          [4.99, 51.67],
+          [4.87, 51.71]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Neder-Rijn",
+        "type": "river"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [5.92, 51.98],
+          [5.72, 51.99],
+          [5.52, 52.03],
+          [5.32, 52.05],
+          [5.12, 52.02],
+          [4.96, 51.99]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Waal",
+        "type": "river"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [5.92, 51.98],
+          [5.75, 51.84],
+          [5.55, 51.85],
+          [5.35, 51.87],
+          [5.15, 51.89],
+          [4.90, 51.91],
+          [4.70, 51.91],
+          [4.55, 51.90]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Vaalserberg",
+        "type": "mountain"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [5.9989, 50.7534]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Biesbosch",
+        "type": "nature"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [4.72, 51.72],
+            [4.85, 51.82],
+            [4.97, 51.80],
+            [4.96, 51.69],
+            [4.84, 51.64],
+            [4.74, 51.67],
+            [4.72, 51.72]
+          ]
+        ]
+      }
+    }
+  ]
+}
