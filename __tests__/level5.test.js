@@ -11,6 +11,7 @@ describe('Level 5 Data', () => {
       { name: "Utrecht", region: "Utrecht", type: "city" },
       { name: "Amersfoort", region: "Utrecht", type: "city" },
       { name: "Bergen op Zoom", region: "Noord-Brabant", type: "city" },
+      { name: "Breda", region: "Noord-Brabant", type: "city" },
       { name: "Roosendaal", region: "Noord-Brabant", type: "city" },
       { name: "Tilburg", region: "Noord-Brabant", type: "city" },
       { name: "Oss", region: "Noord-Brabant", type: "city" },
@@ -41,6 +42,7 @@ describe('Level 5 Data', () => {
     const cities = level5Data.filter(item => item.type === 'city');
     const cityNames = cities.map(c => c.name);
     expect(cityNames).toContain('Bergen op Zoom');
+    expect(cityNames).toContain('Breda');
     expect(cityNames).toContain('Roosendaal');
     expect(cityNames).toContain('Tilburg');
     expect(cityNames).toContain('Oss');
@@ -79,13 +81,13 @@ describe('Level 5 Data', () => {
     expect(natureNames).toContain('Biesbosch');
   });
 
-  test('Level 5 should have 19 total items', () => {
-    expect(level5Data).toHaveLength(19);
+  test('Level 5 should have 20 total items', () => {
+    expect(level5Data).toHaveLength(20);
   });
 
-  test('Level 5 should have 13 cities', () => {
+  test('Level 5 should have 14 cities', () => {
     const cities = level5Data.filter(item => item.type === 'city');
-    expect(cities).toHaveLength(13);
+    expect(cities).toHaveLength(14);
   });
 
   test('Level 5 cities should have correct province assignments', () => {
@@ -93,7 +95,7 @@ describe('Level 5 Data', () => {
     expect(utrechtCities).toHaveLength(2);
 
     const brabantCities = level5Data.filter(item => item.type === 'city' && item.region === 'Noord-Brabant');
-    expect(brabantCities).toHaveLength(7);
+    expect(brabantCities).toHaveLength(8);
 
     const limburgCities = level5Data.filter(item => item.type === 'city' && item.region === 'Limburg');
     expect(limburgCities).toHaveLength(4);
@@ -113,7 +115,7 @@ describe('Level 5 GeoJSON', () => {
     expect(Array.isArray(geojson.features)).toBe(true);
   });
 
-  test('GeoJSON should have 19 features', () => {
+  test('GeoJSON should have 20 features', () => {
     const fs = require('fs');
     const path = require('path');
     const geojsonPath = path.join(__dirname, '../assets/central_southern_cities.geojson');
@@ -121,7 +123,7 @@ describe('Level 5 GeoJSON', () => {
     const content = fs.readFileSync(geojsonPath, 'utf8');
     const geojson = JSON.parse(content);
 
-    expect(geojson.features).toHaveLength(19);
+    expect(geojson.features).toHaveLength(20);
   });
 
   test('GeoJSON should include all cities as Points', () => {
@@ -133,7 +135,7 @@ describe('Level 5 GeoJSON', () => {
     const geojson = JSON.parse(content);
 
     const cities = geojson.features.filter(f => f.properties.type === 'city');
-    expect(cities).toHaveLength(13);
+    expect(cities).toHaveLength(14);
     cities.forEach(city => {
       expect(city.geometry.type).toBe('Point');
       expect(city.geometry.coordinates).toHaveLength(2);
