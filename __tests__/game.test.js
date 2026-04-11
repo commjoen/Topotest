@@ -137,7 +137,7 @@ describe('Topotest Game Tests', () => {
         .toLowerCase()
         .replace(/\s+/g, '')
         .replace(/-/g, '')
-        .replace(/'/g, '')
+        .replace(/['\u2018\u2019\u02bc]/g, '')
         .replace(/ë/g, 'e')
         .replace(/ï/g, 'i')
         .replace(/ö/g, 'o')
@@ -170,6 +170,21 @@ describe('Topotest Game Tests', () => {
 
     test('should remove apostrophes', () => {
       expect(normalizeTestAnswer("'s-Hertogenbosch")).toBe('shertogenbosch');
+    });
+
+    test('should accept s-Hertogenbosch without hyphen', () => {
+      expect(normalizeTestAnswer("'sHertogenbosch")).toBe('shertogenbosch');
+      expect(normalizeTestAnswer("'s Hertogenbosch")).toBe('shertogenbosch');
+      expect(normalizeTestAnswer("s-Hertogenbosch")).toBe('shertogenbosch');
+    });
+
+    test("should accept 's-Hertogenbosch with curly/smart apostrophes", () => {
+      // U+2018 LEFT SINGLE QUOTATION MARK
+      expect(normalizeTestAnswer('\u2018s-Hertogenbosch')).toBe('shertogenbosch');
+      // U+2019 RIGHT SINGLE QUOTATION MARK
+      expect(normalizeTestAnswer('\u2019s-Hertogenbosch')).toBe('shertogenbosch');
+      // U+02BC MODIFIER LETTER APOSTROPHE
+      expect(normalizeTestAnswer('\u02bcs-Hertogenbosch')).toBe('shertogenbosch');
     });
 
     test('should handle empty strings', () => {

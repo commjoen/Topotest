@@ -523,7 +523,7 @@ function normalizeAnswer(answer) {
         .toLowerCase()
         .replace(/\s+/g, '')
         .replace(/-/g, '')
-        .replace(/'/g, '')
+        .replace(/['\u2018\u2019\u02bc]/g, '')
         // fall back simple replacements for characters that sometimes remain
         .replace(/ë/g, 'e')
         .replace(/ï/g, 'i')
