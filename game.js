@@ -1636,10 +1636,161 @@ function drawMap() {
         }
     }
 
+    // Fallback rendering for Level 6 when d3.js is not available
+    async function renderWesternCitiesAndWatersFallback() {
+        const westernProvincePaths = {
+            "Noord-Holland": provincePaths["Noord-Holland"],
+            "Zuid-Holland": provincePaths["Zuid-Holland"],
+            "Zeeland": provincePaths["Zeeland"]
+        };
+
+        const tintMap6 = {
+            "Noord-Holland": '#d99b78',
+            "Zuid-Holland": '#cc6b4a',
+            "Zeeland": '#b86b53'
+        };
+
+        Object.keys(westernProvincePaths).forEach(name => {
+            const pathData = westernProvincePaths[name];
+            const tint = tintMap6[name] || '#d09a74';
+
+            const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            const base = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            base.setAttribute('d', pathData);
+            base.setAttribute('fill', tint);
+            base.setAttribute('class', 'map-region');
+            base.setAttribute('data-region', name);
+            group.appendChild(base);
+
+            const inner = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            inner.setAttribute('d', pathData);
+            inner.setAttribute('fill', 'none');
+            inner.setAttribute('stroke', '#fff');
+            inner.setAttribute('stroke-width', '0.9');
+            inner.setAttribute('pointer-events', 'none');
+            group.appendChild(inner);
+
+            mapSvg.appendChild(group);
+        });
+
+        const projectFallbackCoord = ([lon, lat]) => {
+            const minLon = 3.35, maxLon = 7.25;
+            const minLat = 50.75, maxLat = 53.65;
+            const x = ((lon - minLon) / (maxLon - minLon)) * 700;
+            const y = ((maxLat - lat) / (maxLat - minLat)) * 600;
+            return [x, y];
+        };
+
+        try {
+            const dataResp = await fetch('assets/western_cities_waters.geojson');
+            if (!dataResp.ok) {
+                console.warn('Failed to load western_cities_waters.geojson');
+                return;
+            }
+
+            const dataGeo = await dataResp.json();
+
+            dataGeo.features.forEach(feat => {
+                const itemName = feat.properties.name;
+                const itemType = feat.properties.type;
+
+                if (itemType === 'city' || itemType === 'airport') {
+                    const [cx, cy] = projectFallbackCoord(feat.geometry.coordinates);
+
+                    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    circle.setAttribute('cx', cx);
+                    circle.setAttribute('cy', cy);
+                    circle.setAttribute('r', itemType === 'airport' ? '7' : '6');
+                    circle.setAttribute('class', 'city-marker');
+                    circle.setAttribute('data-region', itemName);
+
+                    if (currentQuestion && normalizeAnswer(itemName) === normalizeAnswer(currentQuestion.name)) {
+                        circle.classList.add('highlighted');
+                        circle.setAttribute('r', itemType === 'airport' ? '11' : '10');
+                    }
+
+                    mapSvg.appendChild(circle);
+
+                    const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    label.setAttribute('x', cx);
+                    label.setAttribute('y', cy - 10);
+                    label.setAttribute('text-anchor', 'middle');
+                    label.setAttribute('class', 'city-label');
+                    label.textContent = '???';
+
+                    if (currentQuestion && normalizeAnswer(itemName) === normalizeAnswer(currentQuestion.name)) {
+                        label.classList.add('highlighted');
+                    }
+
+                    mapSvg.appendChild(label);
+                } else if (itemType === 'river' || itemType === 'canal' || itemType === 'waterway' || itemType === 'dam') {
+                    const pathData = feat.geometry.coordinates.map((coord, i) => {
+                        const [x, y] = projectFallbackCoord(coord);
+                        return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+                    }).join(' ');
+
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path.setAttribute('d', pathData);
+                    path.setAttribute('class', 'map-waterway');
+                    path.setAttribute('fill', 'none');
+                    path.setAttribute('stroke', itemType === 'dam' ? '#8a6a57' : 'url(#waterGradient)');
+                    path.setAttribute('stroke-width', itemType === 'dam' ? '10' : '8');
+                    if (itemType !== 'dam') {
+                        path.setAttribute('filter', 'url(#waterGlow)');
+                    }
+                    path.setAttribute('stroke-linecap', 'round');
+                    path.setAttribute('stroke-linejoin', 'round');
+                    path.setAttribute('data-region', itemName);
+
+                    if (currentQuestion && normalizeAnswer(itemName) === normalizeAnswer(currentQuestion.name)) {
+                        path.classList.add('highlighted');
+                    }
+
+                    mapSvg.appendChild(path);
+                } else if (itemType === 'lake' || itemType === 'estuary' || itemType === 'island') {
+                    const ring = feat.geometry.coordinates[0] || [];
+                    const pathData = ring.map((coord, i) => {
+                        const [x, y] = projectFallbackCoord(coord);
+                        return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+                    }).join(' ') + ' Z';
+
+                    const areaPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    areaPath.setAttribute('d', pathData);
+                    areaPath.setAttribute('data-region', itemName);
+
+                    if (itemType === 'island') {
+                        areaPath.setAttribute('class', 'map-region');
+                        areaPath.setAttribute('fill', '#e0ad86');
+                        areaPath.setAttribute('stroke', '#8a6a57');
+                        areaPath.setAttribute('stroke-width', '1.2');
+                    } else {
+                        areaPath.setAttribute('class', 'map-waterbody');
+                        areaPath.setAttribute('fill', 'url(#waterGradient)');
+                        areaPath.setAttribute('opacity', itemType === 'lake' ? '0.7' : '0.78');
+                        areaPath.setAttribute('stroke', '#176fb0');
+                        areaPath.setAttribute('stroke-width', '2');
+                    }
+
+                    if (currentQuestion && normalizeAnswer(itemName) === normalizeAnswer(currentQuestion.name)) {
+                        areaPath.classList.add('highlighted');
+                        if (itemType !== 'island') {
+                            areaPath.setAttribute('opacity', '0.95');
+                        }
+                    }
+
+                    mapSvg.appendChild(areaPath);
+                }
+            });
+        } catch (e) {
+            console.error('Error rendering western cities and waters fallback:', e);
+        }
+    }
+
     // Render helper for western cities, waters and landmarks (Level 6)
     async function renderWesternCitiesAndWaters() {
         if (typeof d3 === 'undefined') {
-            console.warn('d3.js not loaded, cannot render Level 6');
+            console.warn('d3.js not loaded, using fallback rendering for Level 6');
+            renderWesternCitiesAndWatersFallback();
             return;
         }
 
@@ -1805,6 +1956,7 @@ function drawMap() {
             }
         } catch (e) {
             console.error('Error rendering western cities and waters:', e);
+            renderWesternCitiesAndWatersFallback();
         }
     }
     function renderGeoJSON(geojson) {
