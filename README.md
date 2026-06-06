@@ -82,9 +82,26 @@ In dit level leren kinderen de namen van steden, rivieren en regio's in de ooste
 - **Wateren**: IJsselmeer, Markermeer
 - **Regio's**: Twente, Veluwe
 
+### Level 5: Centrale & Zuidelijke Steden
+In dit level leren kinderen de namen van steden, wateren en herkenningspunten in het midden en zuiden van Nederland:
+- **Utrecht**: Utrecht, Amersfoort
+- **Noord-Brabant**: Bergen op Zoom, Breda, Roosendaal, Tilburg, Oss, 's-Hertogenbosch, Eindhoven, Helmond
+- **Limburg**: Venlo, Roermond, Maastricht, Heerlen
+- **Wateren**: Amsterdam-Rijnkanaal, Maas, Neder-Rijn, Waal
+- **Herkenningspunten**: Vaalserberg, Biesbosch
+
+### Level 6: Westelijke Steden & Wateren
+In dit level leren kinderen de namen van steden, wateren en herkenningspunten in West-Nederland:
+- **Noord-Holland**: Texel, Den Helder, Alkmaar, Purmerend, Amsterdam, Amstelveen, Zaandam, Haarlem, Hilversum, Enkhuizen
+- **Wateren en plekken in Noord-Holland**: IJsselmeer, Markermeer, Afsluitdijk, Noordzeekanaal, Haarlemmermeer, Schiphol
+- **Zuid-Holland**: Leiden, Alphen aan de Rijn, Den Haag, Delft, Gouda, Dordrecht, Rotterdam, Zoetermeer
+- **Wateren in Zuid-Holland**: Nieuwe Waterweg, Lek, Rijnmond
+- **Zeeland**: Terneuzen, Vlissingen, Middelburg
+- **Wateren in Zeeland**: Oosterschelde, Westerschelde
+
 ## Hoe te gebruiken
 1. Open `index.html` in een webbrowser
-2. Kies een level (Level 1, 2, 3, of 4)
+2. Kies een level (Level 1 t/m 6)
 3. Klik op "Start Spel"
 4. Bekijk de gemarkeerde regio op de kaart
 5. Voer de naam in van de gemarkeerde regio
@@ -92,7 +109,7 @@ In dit level leren kinderen de namen van steden, rivieren en regio's in de ooste
 7. Krijg feedback en ga door naar de volgende vraag
 
 ## Features
-- Twee levels met verschillende moeilijkheidsgraden
+- Zes levels met verschillende moeilijkheidsgraden
 - Interactieve kaart met gemarkeerde gebieden
 - **Geografisch accurate kaart van Nederland** met realistische provincie- en waterlichaamvormen
 - **Overlay highlighting** voor de gevraagde regio's en steden
