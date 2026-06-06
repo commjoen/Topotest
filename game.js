@@ -1645,9 +1645,9 @@ function drawMap() {
         };
 
         const tintMap6 = {
-            "Noord-Holland": '#d99b78',
-            "Zuid-Holland": '#cc6b4a',
-            "Zeeland": '#b86b53'
+            "Noord-Holland": '#c97a5f',
+            "Zuid-Holland": '#b85a45',
+            "Zeeland": '#a84f3f'
         };
 
         Object.keys(westernProvincePaths).forEach(name => {
@@ -1760,7 +1760,7 @@ function drawMap() {
 
                     if (itemType === 'island') {
                         areaPath.setAttribute('class', 'map-region');
-                        areaPath.setAttribute('fill', '#e0ad86');
+                        areaPath.setAttribute('fill', '#c97a5f');
                         areaPath.setAttribute('stroke', '#8a6a57');
                         areaPath.setAttribute('stroke-width', '1.2');
                     } else {
@@ -1814,9 +1814,9 @@ function drawMap() {
                 const pathGen = d3.geoPath().projection(projection);
 
                 const tintMap6 = {
-                    "Noord-Holland": '#d99b78',
-                    "Zuid-Holland": '#cc6b4a',
-                    "Zeeland": '#b86b53'
+                    "Noord-Holland": '#c97a5f',
+                    "Zuid-Holland": '#b85a45',
+                    "Zeeland": '#a84f3f'
                 };
 
                 westernProvinces.forEach(feat => {
@@ -1936,7 +1936,7 @@ function drawMap() {
                             const islandPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                             islandPath.setAttribute('d', d);
                             islandPath.setAttribute('class', 'map-region');
-                            islandPath.setAttribute('fill', '#e0ad86');
+                            islandPath.setAttribute('fill', '#c97a5f');
                             islandPath.setAttribute('stroke', '#8a6a57');
                             islandPath.setAttribute('stroke-width', '1.2');
                             islandPath.setAttribute('data-region', itemName);
