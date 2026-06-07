@@ -148,6 +148,27 @@ describe('Level 6 GeoJSON', () => {
     });
   });
 
+  describe('Level 6 Rendering Style', () => {
+    test('Level 6 water bodies should use dedicated non-multiply class', () => {
+      const fs = require('fs');
+      const path = require('path');
+      const gameJsPath = path.join(__dirname, '../game.js');
+      const source = fs.readFileSync(gameJsPath, 'utf8');
+
+      expect(source).toContain("map-waterbody map-waterbody-level6");
+    });
+
+    test('Level 6 water body class should override blend mode', () => {
+      const fs = require('fs');
+      const path = require('path');
+      const cssPath = path.join(__dirname, '../style.css');
+      const source = fs.readFileSync(cssPath, 'utf8');
+
+      expect(source).toContain('.map-waterbody-level6');
+      expect(source).toContain('mix-blend-mode: normal;');
+    });
+  });
+
   test('GeoJSON should include Schiphol as an airport point', () => {
     const fs = require('fs');
     const path = require('path');

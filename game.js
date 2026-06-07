@@ -1764,7 +1764,7 @@ function drawMap() {
                         areaPath.setAttribute('stroke', '#8a6a57');
                         areaPath.setAttribute('stroke-width', '1.2');
                     } else {
-                        areaPath.setAttribute('class', 'map-waterbody');
+                        areaPath.setAttribute('class', 'map-waterbody map-waterbody-level6');
                         areaPath.setAttribute('fill', 'url(#waterGradient)');
                         areaPath.setAttribute('opacity', itemType === 'lake' ? '0.7' : '0.78');
                         areaPath.setAttribute('stroke', '#176fb0');
@@ -1916,7 +1916,7 @@ function drawMap() {
 
                             const waterPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                             waterPath.setAttribute('d', d);
-                            waterPath.setAttribute('class', 'map-waterbody');
+                            waterPath.setAttribute('class', 'map-waterbody map-waterbody-level6');
                             waterPath.setAttribute('fill', 'url(#waterGradient)');
                             waterPath.setAttribute('opacity', itemType === 'lake' ? '0.7' : '0.78');
                             waterPath.setAttribute('stroke', '#176fb0');

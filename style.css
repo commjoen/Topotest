@@ -316,6 +316,11 @@ header h1 {
     cursor: pointer;
 }
 
+/* Level 6 has warm land tints; avoid dark artifacts from multiply blending. */
+.map-waterbody-level6 {
+    mix-blend-mode: normal;
+}
+
 .map-waterbody:hover {
     opacity: 1 !important;
 }
