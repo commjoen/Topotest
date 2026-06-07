@@ -90,14 +90,12 @@ In dit level leren kinderen de namen van steden, wateren en herkenningspunten in
 - **Wateren**: Amsterdam-Rijnkanaal, Maas, Neder-Rijn, Waal
 - **Herkenningspunten**: Vaalserberg, Biesbosch
 
-### Level 6: Westelijke Steden & Wateren
-In dit level leren kinderen de namen van steden, wateren en herkenningspunten in West-Nederland:
+### Level 6: Westelijke Steden
+In dit level leren kinderen de namen van steden en herkenningspunten in West-Nederland:
 - **Noord-Holland**: Texel, Den Helder, Alkmaar, Purmerend, Amsterdam, Amstelveen, Zaandam, Haarlem, Hilversum, Enkhuizen
-- **Wateren en plekken in Noord-Holland**: IJsselmeer, Markermeer, Afsluitdijk, Noordzeekanaal, Haarlemmermeer, Schiphol
+- **Plekken in Noord-Holland**: Schiphol
 - **Zuid-Holland**: Leiden, Alphen aan de Rijn, Den Haag, Delft, Gouda, Dordrecht, Rotterdam, Zoetermeer
-- **Wateren in Zuid-Holland**: Nieuwe Waterweg, Lek, Rijnmond
 - **Zeeland**: Terneuzen, Vlissingen, Middelburg
-- **Wateren in Zeeland**: Oosterschelde, Westerschelde
 
 ## Hoe te gebruiken
 1. Open `index.html` in een webbrowser
