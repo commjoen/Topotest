@@ -624,14 +624,15 @@ footer a:hover {
         order: 3;
         min-height: 280px;
         max-height: none;
+        --mobile-level6-water-stroke-width: 5px;
     }
 
     /* On mobile in level 6, render water next to land as shoreline strokes. */
-    .map-waterbody-level6 {
-        fill: none !important;
-        opacity: 1 !important;
-        stroke: url(#waterGradient) !important;
-        stroke-width: 5 !important;
+    #map .map-waterbody.map-waterbody-level6 {
+        fill: none;
+        opacity: 1;
+        stroke: url(#waterGradient);
+        stroke-width: var(--mobile-level6-water-stroke-width);
     }
 
     .question-container {
