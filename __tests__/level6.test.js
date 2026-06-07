@@ -144,27 +144,6 @@ describe('Level 6 GeoJSON', () => {
     });
   });
 
-  describe('Level 6 Rendering Style', () => {
-    test('Level 6 renderer should apply dedicated class in both d3 and fallback paths', () => {
-      const gameJsPath = path.join(__dirname, '../game.js');
-      const source = fs.readFileSync(gameJsPath, 'utf8');
-
-      const classAssignment = "map-waterbody map-waterbody-level6";
-      const assignmentCount = source.split(classAssignment).length - 1;
-      expect(assignmentCount).toBe(2);
-
-      expect(source).toMatch(/renderWesternCitiesAndWatersFallback[\s\S]*map-waterbody map-waterbody-level6/);
-      expect(source).toMatch(/renderWesternCitiesAndWaters[\s\S]*map-waterbody map-waterbody-level6/);
-    });
-
-    test('Level 6 water body class should override blend mode', () => {
-      const cssPath = path.join(__dirname, '../style.css');
-      const source = fs.readFileSync(cssPath, 'utf8');
-
-      expect(source).toMatch(/\.map-waterbody-level6\s*\{[^}]*mix-blend-mode:\s*normal;[^}]*\}/);
-    });
-  });
-
   test('GeoJSON should include Schiphol as an airport point', () => {
     const geojsonPath = path.join(__dirname, '../assets/western_cities_waters.geojson');
 
@@ -219,6 +198,27 @@ describe('Level 6 GeoJSON', () => {
       const feature = geojson.features.find(f => f.properties.name === name);
       expect(feature).toBeDefined();
       expect(feature.geometry.type).toBe('Polygon');
+    });
+  });
+
+  describe('Level 6 Rendering Style', () => {
+    test('Level 6 renderer should apply dedicated class in both d3 and fallback paths', () => {
+      const gameJsPath = path.join(__dirname, '../game.js');
+      const source = fs.readFileSync(gameJsPath, 'utf8');
+
+      const classAssignment = "map-waterbody map-waterbody-level6";
+      const assignmentCount = source.split(classAssignment).length - 1;
+      expect(assignmentCount).toBe(2);
+
+      expect(source).toMatch(/renderWesternCitiesAndWatersFallback[\s\S]*map-waterbody map-waterbody-level6/);
+      expect(source).toMatch(/renderWesternCitiesAndWaters[\s\S]*map-waterbody map-waterbody-level6/);
+    });
+
+    test('Level 6 water body class should override blend mode', () => {
+      const cssPath = path.join(__dirname, '../style.css');
+      const source = fs.readFileSync(cssPath, 'utf8');
+
+      expect(source).toMatch(/\.map-waterbody-level6\s*\{[^}]*mix-blend-mode:\s*normal;[^}]*\}/);
     });
   });
 });
