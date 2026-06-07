@@ -1,6 +1,8 @@
 /**
  * @jest-environment jsdom
  */
+const fs = require('fs');
+const path = require('path');
 
 describe('Level 6 Data', () => {
   let level6Data;
@@ -110,8 +112,6 @@ describe('Level 6 Data', () => {
 
 describe('Level 6 GeoJSON', () => {
   test('GeoJSON file should be valid JSON', () => {
-    const fs = require('fs');
-    const path = require('path');
     const geojsonPath = path.join(__dirname, '../assets/western_cities_waters.geojson');
 
     const content = fs.readFileSync(geojsonPath, 'utf8');
@@ -122,8 +122,6 @@ describe('Level 6 GeoJSON', () => {
   });
 
   test('GeoJSON should have 32 features', () => {
-    const fs = require('fs');
-    const path = require('path');
     const geojsonPath = path.join(__dirname, '../assets/western_cities_waters.geojson');
 
     const content = fs.readFileSync(geojsonPath, 'utf8');
@@ -133,8 +131,6 @@ describe('Level 6 GeoJSON', () => {
   });
 
   test('GeoJSON should include all cities as points', () => {
-    const fs = require('fs');
-    const path = require('path');
     const geojsonPath = path.join(__dirname, '../assets/western_cities_waters.geojson');
 
     const content = fs.readFileSync(geojsonPath, 'utf8');
@@ -149,29 +145,27 @@ describe('Level 6 GeoJSON', () => {
   });
 
   describe('Level 6 Rendering Style', () => {
-    test('Level 6 water bodies should use dedicated non-multiply class', () => {
-      const fs = require('fs');
-      const path = require('path');
+    test('Level 6 renderer should apply dedicated class in both d3 and fallback paths', () => {
       const gameJsPath = path.join(__dirname, '../game.js');
       const source = fs.readFileSync(gameJsPath, 'utf8');
 
-      expect(source).toContain("map-waterbody map-waterbody-level6");
+      const classAssignment = "map-waterbody map-waterbody-level6";
+      const assignmentCount = source.split(classAssignment).length - 1;
+      expect(assignmentCount).toBe(2);
+
+      expect(source).toMatch(/renderWesternCitiesAndWatersFallback[\s\S]*map-waterbody map-waterbody-level6/);
+      expect(source).toMatch(/renderWesternCitiesAndWaters[\s\S]*map-waterbody map-waterbody-level6/);
     });
 
     test('Level 6 water body class should override blend mode', () => {
-      const fs = require('fs');
-      const path = require('path');
       const cssPath = path.join(__dirname, '../style.css');
       const source = fs.readFileSync(cssPath, 'utf8');
 
-      expect(source).toContain('.map-waterbody-level6');
-      expect(source).toContain('mix-blend-mode: normal;');
+      expect(source).toMatch(/\.map-waterbody-level6\s*\{[^}]*mix-blend-mode:\s*normal;[^}]*\}/);
     });
   });
 
   test('GeoJSON should include Schiphol as an airport point', () => {
-    const fs = require('fs');
-    const path = require('path');
     const geojsonPath = path.join(__dirname, '../assets/western_cities_waters.geojson');
 
     const content = fs.readFileSync(geojsonPath, 'utf8');
@@ -184,8 +178,6 @@ describe('Level 6 GeoJSON', () => {
   });
 
   test('GeoJSON should include Texel as an island polygon', () => {
-    const fs = require('fs');
-    const path = require('path');
     const geojsonPath = path.join(__dirname, '../assets/western_cities_waters.geojson');
 
     const content = fs.readFileSync(geojsonPath, 'utf8');
@@ -198,8 +190,6 @@ describe('Level 6 GeoJSON', () => {
   });
 
   test('GeoJSON should include line features for Afsluitdijk and Zuid-Holland waters', () => {
-    const fs = require('fs');
-    const path = require('path');
     const geojsonPath = path.join(__dirname, '../assets/western_cities_waters.geojson');
 
     const content = fs.readFileSync(geojsonPath, 'utf8');
@@ -220,8 +210,6 @@ describe('Level 6 GeoJSON', () => {
   });
 
   test('GeoJSON should include water polygons for lakes and estuaries', () => {
-    const fs = require('fs');
-    const path = require('path');
     const geojsonPath = path.join(__dirname, '../assets/western_cities_waters.geojson');
 
     const content = fs.readFileSync(geojsonPath, 'utf8');
