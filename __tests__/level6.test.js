@@ -214,6 +214,14 @@ describe('Level 6 GeoJSON', () => {
       expect(source).toMatch(/renderWesternCitiesAndWaters[\s\S]*map-waterbody map-waterbody-level6/);
     });
 
+    test('Level 6 d3 projection should fit provinces together with level data GeoJSON', () => {
+      const gameJsPath = path.join(__dirname, '../game.js');
+      const source = fs.readFileSync(gameJsPath, 'utf8');
+
+      expect(source).toContain('features: [...westernProvincesGeo.features, ...dataGeo.features]');
+      expect(source).toMatch(/fitSize\(\[width, height\], projectionGeo\)/);
+    });
+
     test('Level 6 water body class should override blend mode', () => {
       const cssPath = path.join(__dirname, '../style.css');
       const source = fs.readFileSync(cssPath, 'utf8');
