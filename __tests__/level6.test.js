@@ -204,7 +204,10 @@ describe('Level 6 GeoJSON', () => {
       const gameJsPath = path.join(__dirname, '../game.js');
       const source = fs.readFileSync(gameJsPath, 'utf8');
 
-      expect(source).toContain('features: [...westernProvincesGeo.features, ...dataGeo.features]');
+      expect(source).toContain('const projectionFeatures = dataGeo');
+      expect(source).toContain('? (LEVEL6_INCLUDE_WATER');
+      expect(source).toContain(": dataGeo.features.filter(feat => !LEVEL6_WATER_TYPES.has(feat.properties?.type)))");
+      expect(source).toContain('features: [...westernProvincesGeo.features, ...projectionFeatures]');
       expect(source).toMatch(/fitSize\(\[width, height\], projectionGeo\)/);
     });
 

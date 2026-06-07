@@ -100,7 +100,7 @@ const level5Data = [
 // Game data for Level 6: Western Province Cities, Waters & Landmarks
 const LEVEL6_WATER_TYPES = new Set(['lake', 'river', 'estuary', 'waterway', 'canal', 'dam']);
 const LEVEL6_INCLUDE_WATER = false;
-const level6BaseData = [
+const level6AllData = [
     { name: "Texel", region: "Noord-Holland", type: "island" },
     { name: "Den Helder", region: "Noord-Holland", type: "city" },
     { name: "Alkmaar", region: "Noord-Holland", type: "city" },
@@ -135,8 +135,8 @@ const level6BaseData = [
     { name: "Westerschelde", type: "estuary" }
 ];
 const level6Data = LEVEL6_INCLUDE_WATER
-    ? level6BaseData
-    : level6BaseData.filter(item => !LEVEL6_WATER_TYPES.has(item.type));
+    ? level6AllData
+    : level6AllData.filter(item => !LEVEL6_WATER_TYPES.has(item.type));
 
 // Game state
 let currentLevel = 1;
