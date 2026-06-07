@@ -582,10 +582,6 @@ footer a:hover {
 }
 
 @media (max-width: 768px) {
-    body {
-        overflow-x: hidden;
-    }
-
     header h1 {
         font-size: 2em;
     }
