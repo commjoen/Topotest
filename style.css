@@ -582,6 +582,10 @@ footer a:hover {
 }
 
 @media (max-width: 768px) {
+    body {
+        overflow-x: hidden;
+    }
+
     header h1 {
         font-size: 2em;
     }
@@ -595,6 +599,10 @@ footer a:hover {
     .level-selector-mobile {
         display: flex;
         grid-column: 1 / span 1;
+        width: 100%;
+        min-width: 0;
+        flex-wrap: wrap;
+        justify-content: flex-start;
     }
 
     .game-container {
@@ -602,6 +610,14 @@ footer a:hover {
         grid-template-rows: auto auto 1fr auto;
         max-height: none;
         padding: 16px 12px;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .level-dropdown {
+        min-width: 0;
+        width: 100%;
+        max-width: 100%;
     }
 
     .level-btn {
