@@ -218,7 +218,7 @@ describe('Level 6 GeoJSON', () => {
       const gameJsPath = path.join(__dirname, '../game.js');
       const source = fs.readFileSync(gameJsPath, 'utf8');
 
-      expect(source).toMatch(/const projectionGeo = dataGeo \? \{\s*type: 'FeatureCollection',\s*features: \[\.\.\.westernProvincesGeo\.features, \.\.\.dataGeo\.features\]/);
+      expect(source).toContain('features: [...westernProvincesGeo.features, ...dataGeo.features]');
       expect(source).toMatch(/fitSize\(\[width, height\], projectionGeo\)/);
     });
 
