@@ -1809,8 +1809,16 @@ function drawMap() {
                     features: westernProvinces
                 };
 
+                const dataResp = await fetch('assets/western_cities_waters.geojson');
+                const dataGeo = dataResp.ok ? await dataResp.json() : null;
+
+                const projectionGeo = dataGeo ? {
+                    type: 'FeatureCollection',
+                    features: [...westernProvincesGeo.features, ...dataGeo.features]
+                } : westernProvincesGeo;
+
                 const width = 700, height = 600;
-                const projection = d3.geoMercator().fitSize([width, height], westernProvincesGeo);
+                const projection = d3.geoMercator().fitSize([width, height], projectionGeo);
                 const pathGen = d3.geoPath().projection(projection);
 
                 const tintMap6 = {
@@ -1845,10 +1853,7 @@ function drawMap() {
                     mapSvg.appendChild(group);
                 });
 
-                const dataResp = await fetch('assets/western_cities_waters.geojson');
-                if (dataResp.ok) {
-                    const dataGeo = await dataResp.json();
-
+                if (dataGeo) {
                     dataGeo.features.forEach(feat => {
                         const itemName = feat.properties.name;
                         const itemType = feat.properties.type;
