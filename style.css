@@ -441,17 +441,8 @@ header h1 {
     font-size: 1.5em;
 }
 
-/* Mobile-specific map height cap and smoother scrolling */
+/* Mobile-specific button layout */
 @media (max-width: 600px) {
-    .map-container {
-        min-height: 220px;
-        max-height: 48vh; /* cap to viewport height so controls remain visible */
-        overflow: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    #map { max-height: 100%; }
-
     /* Make control buttons full width on small screens */
     .controls { flex-direction: column; gap: 12px; }
     .controls button, .level-btn { width: 100%; padding: 14px 18px; }
@@ -621,9 +612,9 @@ footer a:hover {
     }
 
     .map-container {
-        order: 3;
         min-height: 280px;
         max-height: none;
+        overflow: visible;
     }
 
     /* On mobile in level 6, render water next to land as shoreline strokes. */
