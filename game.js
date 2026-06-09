@@ -1816,23 +1816,12 @@ function drawMap() {
                     features: westernProvinces
                 };
 
+                const width = 700, height = 600;
+                const projection = d3.geoMercator().fitSize([width, height], westernProvincesGeo);
+                const pathGen = d3.geoPath().projection(projection);
+
                 const dataResp = await fetch('assets/western_cities_waters.geojson');
                 const dataGeo = dataResp.ok ? await dataResp.json() : null;
-
-                const projectionFeatures = dataGeo
-                    ? (LEVEL6_INCLUDE_WATER
-                        ? dataGeo.features
-                        : dataGeo.features.filter(feat => !LEVEL6_WATER_TYPES.has(feat.properties?.type)))
-                    : [];
-
-                const projectionGeo = dataGeo ? {
-                    type: 'FeatureCollection',
-                    features: [...westernProvincesGeo.features, ...projectionFeatures]
-                } : westernProvincesGeo;
-
-                const width = 700, height = 600;
-                const projection = d3.geoMercator().fitSize([width, height], projectionGeo);
-                const pathGen = d3.geoPath().projection(projection);
 
                 const tintMap6 = {
                     "Noord-Holland": '#c97a5f',
