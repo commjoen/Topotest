@@ -98,7 +98,9 @@ const level5Data = [
 ];
 
 // Game data for Level 6: Western Province Cities, Waters & Landmarks
-const level6Data = [
+const LEVEL6_WATER_TYPES = new Set(['lake', 'river', 'estuary', 'waterway', 'canal', 'dam']);
+const LEVEL6_INCLUDE_WATER = false;
+const level6AllData = [
     { name: "Texel", region: "Noord-Holland", type: "island" },
     { name: "Den Helder", region: "Noord-Holland", type: "city" },
     { name: "Alkmaar", region: "Noord-Holland", type: "city" },
@@ -132,6 +134,9 @@ const level6Data = [
     { name: "Oosterschelde", type: "estuary" },
     { name: "Westerschelde", type: "estuary" }
 ];
+const level6Data = LEVEL6_INCLUDE_WATER
+    ? level6AllData
+    : level6AllData.filter(item => !LEVEL6_WATER_TYPES.has(item.type));
 
 // Game state
 let currentLevel = 1;
@@ -1175,6 +1180,7 @@ function drawMap() {
                     dataGeo.features.forEach(feat => {
                         const itemName = feat.properties.name;
                         const itemType = feat.properties.type;
+                        if (!LEVEL6_INCLUDE_WATER && LEVEL6_WATER_TYPES.has(itemType)) return;
                         
                         if (itemType === 'city') {
                             // Draw city marker
@@ -1516,6 +1522,7 @@ function drawMap() {
                     dataGeo.features.forEach(feat => {
                         const itemName = feat.properties.name;
                         const itemType = feat.properties.type;
+                        if (!LEVEL6_INCLUDE_WATER && LEVEL6_WATER_TYPES.has(itemType)) return;
 
                         if (itemType === 'city') {
                             const coords = projection(feat.geometry.coordinates);
@@ -1812,9 +1819,15 @@ function drawMap() {
                 const dataResp = await fetch('assets/western_cities_waters.geojson');
                 const dataGeo = dataResp.ok ? await dataResp.json() : null;
 
+                const projectionFeatures = dataGeo
+                    ? (LEVEL6_INCLUDE_WATER
+                        ? dataGeo.features
+                        : dataGeo.features.filter(feat => !LEVEL6_WATER_TYPES.has(feat.properties?.type)))
+                    : [];
+
                 const projectionGeo = dataGeo ? {
                     type: 'FeatureCollection',
-                    features: [...westernProvincesGeo.features, ...dataGeo.features]
+                    features: [...westernProvincesGeo.features, ...projectionFeatures]
                 } : westernProvincesGeo;
 
                 const width = 700, height = 600;

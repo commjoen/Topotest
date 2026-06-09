@@ -19,11 +19,6 @@ describe('Level 6 Data', () => {
       { name: "Haarlem", region: "Noord-Holland", type: "city" },
       { name: "Hilversum", region: "Noord-Holland", type: "city" },
       { name: "Enkhuizen", region: "Noord-Holland", type: "city" },
-      { name: "IJsselmeer", type: "lake" },
-      { name: "Markermeer", type: "lake" },
-      { name: "Afsluitdijk", type: "dam" },
-      { name: "Noordzeekanaal", type: "canal" },
-      { name: "Haarlemmermeer", type: "lake" },
       { name: "Schiphol", region: "Noord-Holland", type: "airport" },
       { name: "Leiden", region: "Zuid-Holland", type: "city" },
       { name: "Alphen aan de Rijn", region: "Zuid-Holland", type: "city" },
@@ -33,18 +28,13 @@ describe('Level 6 Data', () => {
       { name: "Dordrecht", region: "Zuid-Holland", type: "city" },
       { name: "Rotterdam", region: "Zuid-Holland", type: "city" },
       { name: "Zoetermeer", region: "Zuid-Holland", type: "city" },
-      { name: "Nieuwe Waterweg", type: "waterway" },
-      { name: "Lek", type: "river" },
-      { name: "Rijnmond", type: "estuary" },
       { name: "Terneuzen", region: "Zeeland", type: "city" },
       { name: "Vlissingen", region: "Zeeland", type: "city" },
-      { name: "Middelburg", region: "Zeeland", type: "city" },
-      { name: "Oosterschelde", type: "estuary" },
-      { name: "Westerschelde", type: "estuary" }
+      { name: "Middelburg", region: "Zeeland", type: "city" }
     ];
   });
 
-  test('Level 6 should include all Noord-Holland places and waters', () => {
+  test('Level 6 should include all Noord-Holland places', () => {
     const names = level6Data.map(item => item.name);
     expect(names).toEqual(expect.arrayContaining([
       'Texel',
@@ -57,16 +47,11 @@ describe('Level 6 Data', () => {
       'Haarlem',
       'Hilversum',
       'Enkhuizen',
-      'IJsselmeer',
-      'Markermeer',
-      'Afsluitdijk',
-      'Noordzeekanaal',
-      'Haarlemmermeer',
       'Schiphol'
     ]));
   });
 
-  test('Level 6 should include all Zuid-Holland cities and waters', () => {
+  test('Level 6 should include all Zuid-Holland cities', () => {
     const names = level6Data.map(item => item.name);
     expect(names).toEqual(expect.arrayContaining([
       'Leiden',
@@ -76,26 +61,21 @@ describe('Level 6 Data', () => {
       'Gouda',
       'Dordrecht',
       'Rotterdam',
-      'Zoetermeer',
-      'Nieuwe Waterweg',
-      'Lek',
-      'Rijnmond'
+      'Zoetermeer'
     ]));
   });
 
-  test('Level 6 should include Zeeland cities and waters', () => {
+  test('Level 6 should include Zeeland cities', () => {
     const names = level6Data.map(item => item.name);
     expect(names).toEqual(expect.arrayContaining([
       'Terneuzen',
       'Vlissingen',
-      'Middelburg',
-      'Oosterschelde',
-      'Westerschelde'
+      'Middelburg'
     ]));
   });
 
-  test('Level 6 should have 32 total items', () => {
-    expect(level6Data).toHaveLength(32);
+  test('Level 6 should have 22 total items', () => {
+    expect(level6Data).toHaveLength(22);
   });
 
   test('Level 6 should have correct city distribution', () => {
@@ -107,6 +87,12 @@ describe('Level 6 Data', () => {
 
     const zeelandCities = level6Data.filter(item => item.type === 'city' && item.region === 'Zeeland');
     expect(zeelandCities).toHaveLength(3);
+  });
+
+  test('Level 6 should not include water feature questions by default', () => {
+    const waterTypes = new Set(['lake', 'river', 'estuary', 'waterway', 'canal', 'dam']);
+    const waters = level6Data.filter(item => waterTypes.has(item.type));
+    expect(waters).toHaveLength(0);
   });
 });
 
@@ -218,7 +204,10 @@ describe('Level 6 GeoJSON', () => {
       const gameJsPath = path.join(__dirname, '../game.js');
       const source = fs.readFileSync(gameJsPath, 'utf8');
 
-      expect(source).toContain('features: [...westernProvincesGeo.features, ...dataGeo.features]');
+      expect(source).toContain('const projectionFeatures = dataGeo');
+      expect(source).toContain('? (LEVEL6_INCLUDE_WATER');
+      expect(source).toContain(": dataGeo.features.filter(feat => !LEVEL6_WATER_TYPES.has(feat.properties?.type)))");
+      expect(source).toContain('features: [...westernProvincesGeo.features, ...projectionFeatures]');
       expect(source).toMatch(/fitSize\(\[width, height\], projectionGeo\)/);
     });
 
