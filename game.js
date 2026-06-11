@@ -99,7 +99,44 @@ const level5Data = [
 
 // Game data for Level 6: Western Province Cities, Waters & Landmarks
 const LEVEL6_WATER_TYPES = new Set(['lake', 'river', 'estuary', 'waterway', 'canal', 'dam']);
-const LEVEL6_INCLUDE_WATER = false;
+const LEVEL6_INCLUDE_WATER = true;
+const LEVEL6_TEXEL_Y_OFFSET = -32;
+const LEVEL6_FEATURE_TRANSFORMS = {
+    'Texel': { x: 0, y: LEVEL6_TEXEL_Y_OFFSET, sx: 1, sy: 1 },
+    'IJsselmeer': { x: 30, y: -8, sx: 0.62, sy: 0.84 },
+    'Markermeer': { x: 38, y: -6, sx: 0.44, sy: 0.8 },
+    'Afsluitdijk': { x: 22, y: -10, sx: 0.78, sy: 1 },
+    'Haarlemmermeer': { x: 18, y: 10, sx: 0.7, sy: 0.76 },
+    'Rijnmond': { x: -18, y: 18, sx: 0.84, sy: 0.88 }
+};
+
+const LEVEL6_CITY_OFFSETS = {
+    'Enkhuizen': { x: -24, y: -8 },
+    'Purmerend': { x: -12, y: -8 }
+};
+
+function getLevel6FeatureTransform(name) {
+    return LEVEL6_FEATURE_TRANSFORMS[name] || { x: 0, y: 0, sx: 1, sy: 1 };
+}
+
+function getLevel6CityOffset(name) {
+    return LEVEL6_CITY_OFFSETS[name] || { x: 0, y: 0 };
+}
+
+function transformLevel6ProjectedPoints(points, name) {
+    const transform = getLevel6FeatureTransform(name);
+    if (!points || points.length === 0) return points;
+
+    const cx = points.reduce((sum, point) => sum + point[0], 0) / points.length;
+    const cy = points.reduce((sum, point) => sum + point[1], 0) / points.length;
+
+    return points.map(([x, y]) => {
+        const tx = cx + (x - cx) * transform.sx + transform.x;
+        const ty = cy + (y - cy) * transform.sy + transform.y;
+        return [tx, ty];
+    });
+}
+
 const level6AllData = [
     { name: "Texel", region: "Noord-Holland", type: "island" },
     { name: "Den Helder", region: "Noord-Holland", type: "city" },
@@ -1703,10 +1740,13 @@ function drawMap() {
 
                 if (itemType === 'city' || itemType === 'airport') {
                     const [cx, cy] = projectFallbackCoord(feat.geometry.coordinates);
+                    const cityOffset = getLevel6CityOffset(itemName);
+                    const cityX = cx + cityOffset.x;
+                    const cityY = cy + cityOffset.y;
 
                     const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                    circle.setAttribute('cx', cx);
-                    circle.setAttribute('cy', cy);
+                    circle.setAttribute('cx', cityX);
+                    circle.setAttribute('cy', cityY);
                     circle.setAttribute('r', itemType === 'airport' ? '7' : '6');
                     circle.setAttribute('class', 'city-marker');
                     circle.setAttribute('data-region', itemName);
@@ -1719,8 +1759,8 @@ function drawMap() {
                     mapSvg.appendChild(circle);
 
                     const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                    label.setAttribute('x', cx);
-                    label.setAttribute('y', cy - 10);
+                    label.setAttribute('x', cityX);
+                    label.setAttribute('y', cityY - 10);
                     label.setAttribute('text-anchor', 'middle');
                     label.setAttribute('class', 'city-label');
                     label.textContent = '???';
@@ -1731,9 +1771,10 @@ function drawMap() {
 
                     mapSvg.appendChild(label);
                 } else if (itemType === 'river' || itemType === 'canal' || itemType === 'waterway' || itemType === 'dam') {
-                    const pathData = feat.geometry.coordinates.map((coord, i) => {
-                        const [x, y] = projectFallbackCoord(coord);
-                        return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+                    const projectedPoints = feat.geometry.coordinates.map(coord => projectFallbackCoord(coord));
+                    const transformedPoints = transformLevel6ProjectedPoints(projectedPoints, itemName);
+                    const pathData = transformedPoints.map((point, i) => {
+                        return `${i === 0 ? 'M' : 'L'} ${point[0]} ${point[1]}`;
                     }).join(' ');
 
                     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -1756,9 +1797,10 @@ function drawMap() {
                     mapSvg.appendChild(path);
                 } else if (itemType === 'lake' || itemType === 'estuary' || itemType === 'island') {
                     const ring = feat.geometry.coordinates[0] || [];
-                    const pathData = ring.map((coord, i) => {
-                        const [x, y] = projectFallbackCoord(coord);
-                        return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+                    const projectedPoints = ring.map(coord => projectFallbackCoord(coord));
+                    const transformedPoints = transformLevel6ProjectedPoints(projectedPoints, itemName);
+                    const pathData = transformedPoints.map((point, i) => {
+                        return `${i === 0 ? 'M' : 'L'} ${point[0]} ${point[1]}`;
                     }).join(' ') + ' Z';
 
                     const areaPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -1820,6 +1862,37 @@ function drawMap() {
                 const projection = d3.geoMercator().fitSize([width, height], westernProvincesGeo);
                 const pathGen = d3.geoPath().projection(projection);
 
+                // Build polygon paths from projected coordinates to avoid globe-complement fill
+                // artifacts when source ring winding is inconsistent.
+                const buildProjectedPolygonPath = (geometry, featureName = '') => {
+                    if (!geometry) return '';
+
+                    const polygonRings = geometry.type === 'Polygon'
+                        ? [geometry.coordinates]
+                        : (geometry.type === 'MultiPolygon' ? geometry.coordinates : []);
+
+                    let pathData = '';
+                    polygonRings.forEach(rings => {
+                        if (!Array.isArray(rings) || !rings.length) return;
+                        const outerRing = rings[0];
+                        if (!Array.isArray(outerRing) || !outerRing.length) return;
+
+                        const projectedPoints = outerRing.map(coord => projection(coord)).filter(Boolean);
+                        const transformedPoints = transformLevel6ProjectedPoints(projectedPoints, featureName);
+
+                        const ringPath = transformedPoints.map((point, i) => {
+                            if (!point) return '';
+                            return `${i === 0 ? 'M' : 'L'} ${point[0]} ${point[1]}`;
+                        }).join(' ');
+
+                        if (ringPath) {
+                            pathData += `${ringPath} Z `;
+                        }
+                    });
+
+                    return pathData.trim();
+                };
+
                 const dataResp = await fetch('assets/western_cities_waters.geojson');
                 const dataGeo = dataResp.ok ? await dataResp.json() : null;
 
@@ -1865,10 +1938,13 @@ function drawMap() {
                             if (!coords) return;
 
                             const [cx, cy] = coords;
+                            const cityOffset = getLevel6CityOffset(itemName);
+                            const cityX = cx + cityOffset.x;
+                            const cityY = cy + cityOffset.y;
 
                             const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                            circle.setAttribute('cx', cx);
-                            circle.setAttribute('cy', cy);
+                            circle.setAttribute('cx', cityX);
+                            circle.setAttribute('cy', cityY);
                             circle.setAttribute('r', itemType === 'airport' ? '7' : '6');
                             circle.setAttribute('class', 'city-marker');
                             circle.setAttribute('data-region', itemName);
@@ -1881,8 +1957,8 @@ function drawMap() {
                             mapSvg.appendChild(circle);
 
                             const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                            label.setAttribute('x', cx);
-                            label.setAttribute('y', cy - 10);
+                            label.setAttribute('x', cityX);
+                            label.setAttribute('y', cityY - 10);
                             label.setAttribute('text-anchor', 'middle');
                             label.setAttribute('class', 'city-label');
                             label.textContent = '???';
@@ -1893,10 +1969,10 @@ function drawMap() {
 
                             mapSvg.appendChild(label);
                         } else if (itemType === 'river' || itemType === 'canal' || itemType === 'waterway' || itemType === 'dam') {
-                            const pathData = feat.geometry.coordinates.map((coord, i) => {
-                                const projCoord = projection(coord);
-                                if (!projCoord) return '';
-                                return `${i === 0 ? 'M' : 'L'} ${projCoord[0]} ${projCoord[1]}`;
+                            const projectedPoints = feat.geometry.coordinates.map(coord => projection(coord)).filter(Boolean);
+                            const transformedPoints = transformLevel6ProjectedPoints(projectedPoints, itemName);
+                            const pathData = transformedPoints.map((point, i) => {
+                                return `${i === 0 ? 'M' : 'L'} ${point[0]} ${point[1]}`;
                             }).join(' ');
 
                             const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -1918,7 +1994,7 @@ function drawMap() {
 
                             mapSvg.appendChild(path);
                         } else if (itemType === 'lake' || itemType === 'estuary') {
-                            const d = pathGen(feat);
+                            const d = buildProjectedPolygonPath(feat.geometry, itemName);
                             if (!d) return;
 
                             const waterPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -1937,7 +2013,7 @@ function drawMap() {
 
                             mapSvg.appendChild(waterPath);
                         } else if (itemType === 'island') {
-                            const d = pathGen(feat);
+                            const d = buildProjectedPolygonPath(feat.geometry, itemName);
                             if (!d) return;
 
                             const islandPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');

@@ -617,14 +617,6 @@ footer a:hover {
         overflow: visible;
     }
 
-    /* On mobile in level 6, render water next to land as shoreline strokes. */
-    #map .map-waterbody.map-waterbody-level6 {
-        fill: none;
-        opacity: 1;
-        stroke: url(#waterGradient);
-        stroke-width: 5px;
-    }
-
     .question-container {
         grid-column: 1 / span 1;
         padding: 12px 8px;
