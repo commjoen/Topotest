@@ -97,9 +97,30 @@ In dit level leren kinderen de namen van steden en herkenningspunten in West-Ned
 - **Zuid-Holland**: Leiden, Alphen aan de Rijn, Den Haag, Delft, Gouda, Dordrecht, Rotterdam, Zoetermeer
 - **Zeeland**: Terneuzen, Vlissingen, Middelburg
 
+### Level 7: Europa
+In dit level leren kinderen de Europese topografie: landen, hoofdsteden/steden, rivieren, gebergten en zeeën:
+- **Landen & Steden**:
+  - Nederland (Amsterdam)
+  - België (Brussel)
+  - Luxemburg (Luxemburg)
+  - Noorwegen (Oslo)
+  - Zweden (Stockholm)
+  - Rusland (Moskou)
+  - Verenigd Koninkrijk (Londen)
+  - Frankrijk (Parijs)
+  - Zwitserland (Bern)
+  - Oostenrijk (Wenen)
+  - Duitsland (Berlijn)
+  - Polen (Warschau)
+  - Italië (Rome)
+  - Spanje (Madrid)
+- **Rivieren**: Schelde, Volga, Thames, Seine, Rhône, Donau
+- **Gebergten**: Alpen, Pyreneeën, Oeral, Kaukasus
+- **Zeeën & Zeestraten**: Noordzee, Oostzee, Middellandse Zee, Straat van Gibraltar
+
 ## Hoe te gebruiken
 1. Open `index.html` in een webbrowser
-2. Kies een level (Level 1 t/m 6)
+2. Kies een level (Level 1 t/m 7)
 3. Klik op "Start Spel"
 4. Bekijk de gemarkeerde regio op de kaart
 5. Voer de naam in van de gemarkeerde regio
@@ -107,10 +128,10 @@ In dit level leren kinderen de namen van steden en herkenningspunten in West-Ned
 7. Krijg feedback en ga door naar de volgende vraag
 
 ## Features
-- Zes levels met verschillende moeilijkheidsgraden
+- Zeven levels met verschillende moeilijkheidsgraden
 - Interactieve kaart met gemarkeerde gebieden
-- **Geografisch accurate kaart van Nederland** met realistische provincie- en waterlichaamvormen
-- **Overlay highlighting** voor de gevraagde regio's en steden
+- **Geografisch accurate kaart van Nederland en Europa** met realistische vormen
+- **Overlay highlighting** voor de gevraagde regio's, wateren, gebergten en steden
 - Score tracking
 - Direct feedback op antwoorden
 - Responsief ontwerp voor verschillende schermformaten

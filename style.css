@@ -14,8 +14,9 @@ body {
 }
 
 .container {
-    max-width: 1000px;
-    width: 100%;
+    max-width: 1400px;
+    width: 98%;
+    margin: 0 auto;
     background: white;
     border-radius: 20px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
@@ -43,7 +44,7 @@ header h1 {
     padding: 20px 24px;
     /* Use a responsive grid so the map and controls can adapt to viewport size */
     display: grid;
-    grid-template-columns: 1fr 360px;
+    grid-template-columns: minmax(0, 1fr) 340px;
     grid-template-rows: auto 1fr auto;
     gap: 18px 24px;
     align-items: start;
@@ -55,6 +56,7 @@ header h1 {
     margin-bottom: 0;
     justify-content: center;
     grid-column: 1 / span 2;
+    flex-wrap: wrap;
 }
 
 .level-selector-mobile {
@@ -193,7 +195,7 @@ header h1 {
 .map-container {
     background: linear-gradient(180deg, #f4f6f8 0%, #eef3f6 100%);
     border-radius: 10px;
-    padding: 14px;
+    padding: 8px;
     margin-bottom: 0;
     display: flex;
     justify-content: center;
@@ -319,6 +321,42 @@ header h1 {
 /* Level 6 has warm land tints; avoid dark artifacts from multiply blending. */
 .map-waterbody-level6 {
     mix-blend-mode: normal;
+}
+
+.map-waterbody-level7 {
+    mix-blend-mode: normal;
+}
+
+/* Mountain ranges and mountain markers */
+.map-mountain {
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.map-mountain:hover {
+    fill: rgba(180, 130, 30, 0.7) !important;
+}
+
+.map-mountain.highlighted {
+    fill: #ff8a7a !important;
+    stroke: #ff4444 !important;
+    stroke-width: 3 !important;
+    opacity: 1 !important;
+}
+
+.mountain-marker {
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.mountain-marker:hover {
+    fill: #a67c1e !important;
+}
+
+.mountain-marker.highlighted {
+    fill: #ff6b6b !important;
+    stroke: #fff !important;
+    stroke-width: 2.5 !important;
 }
 
 .map-waterbody:hover {
