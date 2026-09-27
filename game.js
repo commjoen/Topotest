@@ -2146,7 +2146,7 @@ function drawMap() {
             const projectionGeo = (mainlandFeatures && mainlandFeatures.length > 0)
                 ? { type: 'FeatureCollection', features: mainlandFeatures }
                 : geojson;
-            const projection = d3.geoMercator().fitExtent([[5, 5], [695, 595]], projectionGeo);
+            const projection = d3.geoMercator().fitExtent([[-1500, -500], [1900,2000]], projectionGeo);
             const pathGen = d3.geoPath().projection(projection);
 
             const countryTints = {
