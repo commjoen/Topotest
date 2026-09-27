@@ -323,8 +323,57 @@ header h1 {
     mix-blend-mode: normal;
 }
 
+/* Europe / Level 7 water */
 .map-waterbody-level7 {
     mix-blend-mode: normal;
+    fill: url(#waterGradient);
+    opacity: 0.92;
+    stroke: #12658f;
+    stroke-width: 1.2;
+    vector-effect: non-scaling-stroke;
+    cursor: pointer;
+    transition:
+        opacity 0.2s ease,
+        filter 0.2s ease;
+}
+
+/* Make European seas visually distinct from land */
+.map-waterbody-level7:hover {
+    opacity: 1 !important;
+    filter: url(#waterGlow);
+}
+
+/* Selected sea / strait */
+.map-waterbody-level7.highlighted {
+    fill: url(#waterHighlightGradient) !important;
+    opacity: 1 !important;
+    stroke: #075985 !important;
+    stroke-width: 2.5 !important;
+    filter: url(#waterHighlightGlow);
+}
+
+/* European rivers */
+.map-waterway-level7 {
+    fill: none;
+    stroke: #2b9dcc;
+    stroke-width: 3;
+    opacity: 0.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+}
+
+.map-waterway-level7:hover {
+    stroke: #1479a5;
+    stroke-width: 5;
+    opacity: 1;
+}
+
+.map-waterway-level7.highlighted {
+    stroke: #075985 !important;
+    stroke-width: 7 !important;
+    opacity: 1 !important;
+    filter: url(#waterGlow);
 }
 
 /* Mountain ranges and mountain markers */
@@ -387,7 +436,7 @@ header h1 {
 }
 
 .map-waterway.highlighted {
-    stroke: #ff8a7a !important;
+    stroke: #3613c5 !important;
     stroke-width: 14 !important;
     filter: drop-shadow(0 6px 10px rgba(255, 138, 122, 0.15));
 }

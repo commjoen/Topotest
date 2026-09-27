@@ -99,13 +99,22 @@
                         </pattern>
 
                         <!-- Water gradient and glow -->
-                        <linearGradient id="waterGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stop-color="#3b82c4" />
-                            <stop offset="100%" stop-color="#176fb0" />
+                        <linearGradient id="waterHighlightGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#bfe8f7" stop-opacity="0.85" />
+                            <stop offset="50%" stop-color="#62b8dc" stop-opacity="0.55" />
+                            <stop offset="100%" stop-color="#1976a8" stop-opacity="0.85" />
                         </linearGradient>
 
-                        <filter id="waterGlow" x="-50%" y="-50%" width="200%" height="200%">
-                            <feGaussianBlur stdDeviation="6" result="blur" />
+                        <filter id="waterGlow" x="-30%" y="-30%" width="160%" height="160%">
+                            <feGaussianBlur stdDeviation="2.5" result="blur" />
+                            <feMerge>
+                                <feMergeNode in="blur" />
+                                <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                        </filter>
+
+                        <filter id="waterHighlightGlow" x="-40%" y="-40%" width="180%" height="180%">
+                            <feGaussianBlur stdDeviation="4" result="blur" />
                             <feMerge>
                                 <feMergeNode in="blur" />
                                 <feMergeNode in="SourceGraphic" />
