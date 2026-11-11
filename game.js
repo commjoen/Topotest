@@ -860,7 +860,10 @@ async function renderNorthernEurope(question, mapSvg, renderId) {
     const find = (name, type) => features.find(f => f.properties && f.properties.name === name && f.properties.type === type);
     const waters = ['Noordzee', 'Oostzee'].map(name => find(name, 'sea')).filter(Boolean);
     waters.push({ properties: { name: 'Het Kanaal' }, geometry: { type: 'Polygon', coordinates: [[[-5.5, 48.5], [-1.5, 48.5], [2.6, 50.9], [1.4, 51.2], [-1.5, 50.7], [-5.5, 50.2], [-5.5, 48.5]]] } });
-    waters.forEach(f => addPath(f.geometry, f.properties.name, 'map-waterbody map-waterbody-level7', '#8ccde4', question.name === f.properties.name));
+    waters.forEach(f => {
+        const path = addPath(f.geometry, f.properties.name, 'map-waterbody map-waterbody-level7', '#8ccde4', question.name === f.properties.name);
+        path.style.fill = '#8ccde4';
+    });
 
     const countryNames = ['IJsland', 'Ierland', 'Verenigd Koninkrijk', 'Noorwegen', 'Zweden', 'Finland', 'Denemarken', 'Estland', 'Letland', 'Litouwen', 'Nederland', 'België', 'Frankrijk', 'Duitsland', 'Polen', 'Luxemburg'];
     const scandinavia = ['Noorwegen', 'Zweden', 'Finland', 'Denemarken'];

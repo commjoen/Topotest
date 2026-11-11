@@ -118,9 +118,17 @@ In dit level leren kinderen de Europese topografie: landen, hoofdsteden/steden, 
 - **Gebergten**: Alpen, Pyreneeën, Oeral, Kaukasus
 - **Zeeën & Zeestraten**: Noordzee, Oostzee, Middellandse Zee, Straat van Gibraltar
 
+### Level 8: Noord-Europa
+Leer de landen IJsland, Ierland, het Verenigd Koninkrijk, Noorwegen, Denemarken, Zweden, Finland, Estland, Letland, Litouwen, Nederland en België, en de gebieden Engeland, Schotland en Scandinavië.
+- **Steden**: Dublin, Londen, Liverpool, Glasgow, Oslo, Stockholm, Helsinki, Kopenhagen, Antwerpen en Brussel
+- **Belgische gebieden**: Vlaanderen, Wallonië en de Ardennen
+- **Wateren**: Theems, Noordzee, Het Kanaal en Oostzee
+
+De landenkaart gebruikt de bestaande Europese GeoJSON; de grenzen van de gemarkeerde deelgebieden zijn bij benadering. Ook zonder netwerk of D3 werkt de kaart met de ingebouwde kaartgegevens.
+
 ## Hoe te gebruiken
 1. Open `index.html` in een webbrowser
-2. Kies een level (Level 1 t/m 7)
+2. Kies een level (Level 1 t/m 8)
 3. Klik op "Start Spel"
 4. Bekijk de gemarkeerde regio op de kaart
 5. Voer de naam in van de gemarkeerde regio
@@ -128,7 +136,7 @@ In dit level leren kinderen de Europese topografie: landen, hoofdsteden/steden, 
 7. Krijg feedback en ga door naar de volgende vraag
 
 ## Features
-- Zeven levels met verschillende moeilijkheidsgraden
+- Acht levels met verschillende moeilijkheidsgraden
 - Interactieve kaart met gemarkeerde gebieden
 - **Geografisch accurate kaart van Nederland en Europa** met realistische vormen
 - **Overlay highlighting** voor de gevraagde regio's, wateren, gebergten en steden
