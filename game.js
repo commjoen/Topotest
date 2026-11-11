@@ -230,6 +230,42 @@ const level7Data = [
     { name: "Straat van Gibraltar", type: "strait", aliases: ["Gibraltar", "Straat Gibraltar", "Strait of Gibraltar"] }
 ];
 
+// Game data for Level 8: Noord-Europa
+const level8Data = [
+    { name: "IJsland", type: "country", aliases: ["Iceland"] },
+    { name: "Ierland", type: "country", aliases: ["Ireland"] },
+    { name: "Verenigd Koninkrijk", type: "country", aliases: ["VK", "UK", "United Kingdom"] },
+    { name: "Engeland", type: "region", aliases: ["England"] },
+    { name: "Schotland", type: "region", aliases: ["Scotland"] },
+    { name: "Scandinavië", type: "region", aliases: ["Scandinavie", "Scandinavia"] },
+    { name: "Noorwegen", type: "country", aliases: ["Norway"] },
+    { name: "Denemarken", type: "country", aliases: ["Denmark"] },
+    { name: "Zweden", type: "country", aliases: ["Sweden"] },
+    { name: "Finland", type: "country" },
+    { name: "Estland", type: "country", aliases: ["Estonia"] },
+    { name: "Letland", type: "country", aliases: ["Latvia"] },
+    { name: "Litouwen", type: "country", aliases: ["Lithuania"] },
+    { name: "Nederland", type: "country", aliases: ["Netherlands"] },
+    { name: "België", type: "country", aliases: ["Belgie", "Belgium"] },
+    { name: "Dublin", type: "city", region: "Ierland" },
+    { name: "Londen", type: "city", region: "Engeland", aliases: ["London"] },
+    { name: "Liverpool", type: "city", region: "Engeland" },
+    { name: "Glasgow", type: "city", region: "Schotland" },
+    { name: "Oslo", type: "city", region: "Noorwegen" },
+    { name: "Stockholm", type: "city", region: "Zweden" },
+    { name: "Helsinki", type: "city", region: "Finland" },
+    { name: "Kopenhagen", type: "city", region: "Denemarken", aliases: ["Copenhagen"] },
+    { name: "Antwerpen", type: "city", region: "België", aliases: ["Antwerp"] },
+    { name: "Brussel", type: "city", region: "België", aliases: ["Brussels", "Bruxelles"] },
+    { name: "Vlaanderen", type: "region", region: "België", aliases: ["Flanders"] },
+    { name: "Wallonië", type: "region", region: "België", aliases: ["Wallonie", "Wallonia"] },
+    { name: "Ardennen", type: "region", region: "België", aliases: ["Ardennes"] },
+    { name: "Theems", type: "river", aliases: ["Thames"] },
+    { name: "Noordzee", type: "sea", aliases: ["North Sea"] },
+    { name: "Het Kanaal", type: "sea", aliases: ["Kanaal", "English Channel"] },
+    { name: "Oostzee", type: "sea", aliases: ["Baltische Zee", "Baltic Sea"] }
+];
+
 // Game state
 let currentLevel = 1;
 let currentQuestionIndex = 0;
@@ -247,9 +283,9 @@ let questionLimit = 'all';
 function getHighScores() {
     try {
         const scores = localStorage.getItem('topotest-highscores');
-        return scores ? JSON.parse(scores) : { level1: 0, level2: 0, level3: 0, level4: 0, level5: 0, level6: 0, level7: 0 };
+        return scores ? JSON.parse(scores) : { level1: 0, level2: 0, level3: 0, level4: 0, level5: 0, level6: 0, level7: 0, level8: 0 };
     } catch (e) {
-        return { level1: 0, level2: 0, level3: 0, level4: 0, level5: 0, level6: 0, level7: 0 };
+        return { level1: 0, level2: 0, level3: 0, level4: 0, level5: 0, level6: 0, level7: 0, level8: 0 };
     }
 }
 
@@ -257,7 +293,7 @@ function saveHighScore(level, score) {
     try {
         const scores = getHighScores();
         const key = `level${level}`;
-        if (score > scores[key]) {
+        if (score > (scores[key] || 0)) {
             scores[key] = score;
             localStorage.setItem('topotest-highscores', JSON.stringify(scores));
             return true; // New high score!
@@ -270,7 +306,7 @@ function saveHighScore(level, score) {
 
 function displayHighScore() {
     const scores = getHighScores();
-    const highScore = scores[`level${currentLevel}`];
+    const highScore = scores[`level${currentLevel}`] || 0;
     const highScoreElement = document.getElementById('high-score');
     if (highScoreElement) {
         highScoreElement.textContent = highScore;
@@ -493,6 +529,8 @@ function selectLevel(level) {
     if (level6Btn) level6Btn.classList.toggle('active', level === 6);
     const level7Btn = document.getElementById('level7-btn');
     if (level7Btn) level7Btn.classList.toggle('active', level === 7);
+    const level8Btn = document.getElementById('level8-btn');
+    if (level8Btn) level8Btn.classList.toggle('active', level === 8);
     
     // Update dropdown selection
     const dropdown = document.getElementById('level-dropdown');
@@ -512,7 +550,7 @@ function selectLevel(level) {
     updateTimerDisplay();
     
     // Set current data based on level
-    currentData = level === 1 ? level1Data : (level === 2 ? level2Data : (level === 3 ? level3Data : (level === 4 ? level4Data : (level === 5 ? level5Data : (level === 6 ? level6Data : level7Data)))));
+    currentData = [level1Data, level2Data, level3Data, level4Data, level5Data, level6Data, level7Data, level8Data][level - 1];
     
     // Reset UI
     document.getElementById('answer-input').value = '';
@@ -620,7 +658,7 @@ function checkAnswer() {
         } else {
             feedback.textContent = `Helaas, het juiste antwoord is de ${currentQuestion.name}.`;
         }
-    } else if (currentLevel === 3 || currentLevel === 4 || currentLevel === 5 || currentLevel === 6 || currentLevel === 7) {
+    } else if (currentLevel >= 3 && currentLevel <= 8) {
         // Level 3: northern cities; Level 4: eastern cities and rivers; Level 5/6: advanced mixed geography levels; Level 7: Europa
         const userNorm = normalizeAnswer(userAnswer);
         const nameNorm = normalizeAnswer(currentQuestion.name);
@@ -753,8 +791,130 @@ function updateStats() {
     document.getElementById('question-number').textContent = `${currentQuestionIndex}/${total}`;
 }
 
+const northernEuropeCities = [
+    ["Dublin", -6.2603, 53.3498], ["Londen", -0.1276, 51.5072],
+    ["Liverpool", -2.9916, 53.4084], ["Glasgow", -4.2518, 55.8642],
+    ["Oslo", 10.7522, 59.9139], ["Stockholm", 18.0686, 59.3293],
+    ["Helsinki", 24.9384, 60.1699], ["Kopenhagen", 12.5683, 55.6761],
+    ["Antwerpen", 4.4025, 51.2194], ["Brussel", 4.3517, 50.8503]
+];
+
+// Approximate regions, clipped to the detailed country outlines below.
+const northernEuropeRegions = {
+    "Engeland": { country: "Verenigd Koninkrijk", ring: [[-5.8, 49.8], [2, 49.8], [2, 55.8], [-2.0, 55.8], [-2.7, 55.1], [-3.1, 55.0], [-3.6, 54.8], [-3.0, 53.4], [-2.7, 52.9], [-3.1, 52.1], [-2.6, 51.5], [-5.8, 51.3], [-5.8, 49.8]] },
+    "Schotland": { country: "Verenigd Koninkrijk", ring: [[-9, 54.8], [-3.6, 54.8], [-3.1, 55.0], [-2.7, 55.1], [-2.0, 55.8], [0, 55.8], [0, 61], [-9, 61], [-9, 54.8]] },
+    "Vlaanderen": { country: "België", ring: [[2, 50.72], [3.2, 50.72], [4, 50.72], [4.5, 50.73], [5.1, 50.76], [5.7, 50.75], [6.5, 50.75], [6.5, 52], [2, 52], [2, 50.72]] },
+    "Wallonië": { country: "België", ring: [[2, 49], [7, 49], [7, 50.75], [5.7, 50.75], [5.1, 50.76], [4.5, 50.73], [4, 50.72], [2, 50.72], [2, 49]] },
+    "Ardennen": { country: "België", ring: [[4.25, 49.45], [6.5, 49.45], [6.5, 50.65], [5.6, 50.65], [5.0, 50.4], [4.3, 50.25], [4.25, 49.45]] }
+};
+
+let mapRenderId = 0;
+
+async function renderNorthernEurope(question, mapSvg, renderId) {
+    let geojson = EMBEDDED_EUROPE;
+    try {
+        const response = await fetch('assets/europe.geojson');
+        if (response.ok) {
+            const loaded = await response.json();
+            if (loaded && Array.isArray(loaded.features)) geojson = loaded;
+        }
+    } catch (e) {
+        // The embedded dataset also works offline and without d3.
+    }
+    if (renderId !== mapRenderId) return;
+
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const mercator = lat => Math.log(Math.tan(Math.PI / 4 + lat * Math.PI / 360));
+    const project = ([lon, lat]) => [
+        45 + (lon + 25) * Math.PI / 180 * 610,
+        35 + (mercator(71) - mercator(Math.max(-85, Math.min(85, lat)))) * 610
+    ];
+    const line = (coords, close) => coords.map((point, i) => {
+        const [x, y] = project(point);
+        return `${i ? 'L' : 'M'}${x.toFixed(2)},${y.toFixed(2)}`;
+    }).join(' ') + (close ? ' Z' : '');
+    const pathFor = geometry => {
+        if (geometry.type === 'Polygon') return geometry.coordinates.map(ring => line(ring, true)).join(' ');
+        if (geometry.type === 'MultiPolygon') return geometry.coordinates.map(poly => poly.map(ring => line(ring, true)).join(' ')).join(' ');
+        if (geometry.type === 'LineString') return line(geometry.coordinates, false);
+        return '';
+    };
+    const addPath = (geometry, name, className, fill, highlighted) => {
+        const path = document.createElementNS(svgNS, 'path');
+        path.setAttribute('d', pathFor(geometry));
+        path.setAttribute('class', className);
+        path.setAttribute('fill', fill);
+        path.setAttribute('data-region', name);
+        if (highlighted) path.classList.add('highlighted');
+        path.addEventListener('click', () => {
+            const input = document.getElementById('answer-input');
+            if (gameStarted && !input.disabled) {
+                input.value = name;
+                checkAnswer();
+            }
+        });
+        mapSvg.appendChild(path);
+        return path;
+    };
+    const features = geojson.features;
+    const find = (name, type) => features.find(f => f.properties && f.properties.name === name && f.properties.type === type);
+    const waters = ['Noordzee', 'Oostzee'].map(name => find(name, 'sea')).filter(Boolean);
+    waters.push({ properties: { name: 'Het Kanaal' }, geometry: { type: 'Polygon', coordinates: [[[-5.5, 48.5], [-1.5, 48.5], [2.6, 50.9], [1.4, 51.2], [-1.5, 50.7], [-5.5, 50.2], [-5.5, 48.5]]] } });
+    waters.forEach(f => addPath(f.geometry, f.properties.name, 'map-waterbody map-waterbody-level7', '#8ccde4', question.name === f.properties.name));
+
+    const countryNames = ['IJsland', 'Ierland', 'Verenigd Koninkrijk', 'Noorwegen', 'Zweden', 'Finland', 'Denemarken', 'Estland', 'Letland', 'Litouwen', 'Nederland', 'België', 'Frankrijk', 'Duitsland', 'Polen', 'Luxemburg'];
+    const scandinavia = ['Noorwegen', 'Zweden', 'Finland', 'Denemarken'];
+    countryNames.forEach((name, i) => {
+        const feature = find(name, 'country');
+        if (!feature) return;
+        const selected = question.name === name || (question.name === 'Scandinavië' && scandinavia.includes(name));
+        const path = addPath(feature.geometry, selected && question.name === 'Scandinavië' ? question.name : name, 'map-region', i % 2 ? '#d08a6c' : '#e0a56f', selected);
+        path.setAttribute('stroke', '#fff');
+        path.setAttribute('stroke-width', '0.8');
+        path.setAttribute('fill-rule', 'evenodd');
+    });
+
+    const region = northernEuropeRegions[question.name];
+    if (region) {
+        const country = find(region.country, 'country');
+        if (country) {
+            const clip = document.createElementNS(svgNS, 'clipPath');
+            clip.id = `northern-region-${renderId}`;
+            const outline = document.createElementNS(svgNS, 'path');
+            outline.setAttribute('d', pathFor(country.geometry));
+            outline.setAttribute('clip-rule', 'evenodd');
+            clip.appendChild(outline);
+            mapSvg.appendChild(clip);
+            const overlay = addPath({ type: 'Polygon', coordinates: [region.ring] }, question.name, 'map-region', '#000', true);
+            overlay.setAttribute('clip-path', `url(#${clip.id})`);
+        }
+    }
+
+    const thames = find('Thames', 'river');
+    if (thames) addPath(thames.geometry, 'Theems', 'map-waterway map-waterway-level7', 'none', question.name === 'Theems');
+    northernEuropeCities.forEach(([name, lon, lat]) => {
+        const [x, y] = project([lon, lat]);
+        const circle = document.createElementNS(svgNS, 'circle');
+        circle.setAttribute('cx', x);
+        circle.setAttribute('cy', y);
+        circle.setAttribute('r', question.name === name ? '8' : '4');
+        circle.setAttribute('class', 'city-marker');
+        circle.setAttribute('data-region', name);
+        if (question.name === name) circle.classList.add('highlighted');
+        circle.addEventListener('click', () => {
+            const input = document.getElementById('answer-input');
+            if (gameStarted && !input.disabled) {
+                input.value = name;
+                checkAnswer();
+            }
+        });
+        mapSvg.appendChild(circle);
+    });
+}
+
 // Draw the map
 function drawMap() {
+    const renderId = ++mapRenderId;
     const mapSvg = document.getElementById('map');
     // Clear previous render but preserve any <defs> (gradients, patterns, filters)
     const existingDefs = mapSvg.querySelector('defs');
@@ -818,6 +978,12 @@ function drawMap() {
     // If drawing Europe (level 7), render European geography
     if (currentLevel === 7) {
         renderEurope();
+        setQuestionText();
+        return;
+    }
+
+    if (currentLevel === 8) {
+        renderNorthernEurope(currentQuestion, mapSvg, renderId);
         setQuestionText();
         return;
     }
@@ -2840,7 +3006,7 @@ function drawMap() {
             questionElement.textContent = 'Wat is de naam van het gemarkeerde element?';
         } else if (currentLevel === 6) {
             questionElement.textContent = 'Wat is de naam van het gemarkeerde element?';
-        } else if (currentLevel === 7) {
+        } else if (currentLevel === 7 || currentLevel === 8) {
             if (currentQuestion) {
                 if (currentQuestion.type === 'country') {
                     questionElement.textContent = 'Wat is de naam van het gemarkeerde land?';
@@ -2850,6 +3016,8 @@ function drawMap() {
                     questionElement.textContent = 'Wat is de naam van de gemarkeerde rivier?';
                 } else if (currentQuestion.type === 'mountain') {
                     questionElement.textContent = 'Wat is de naam van het gemarkeerde gebergte?';
+                } else if (currentQuestion.type === 'region') {
+                    questionElement.textContent = 'Wat is de naam van het gemarkeerde gebied?';
                 } else if (currentQuestion.type === 'sea' || currentQuestion.type === 'strait') {
                     questionElement.textContent = 'Wat is de naam van het gemarkeerde water?';
                 } else {
@@ -2885,6 +3053,7 @@ if (typeof module !== 'undefined' && module.exports) {
         level5Data,
         level6Data,
         level7Data,
+        level8Data,
         // Export functions for testing
         updateStats,
         updateTimerDisplay
