@@ -872,6 +872,7 @@ async function renderNorthernEurope(question, mapSvg, renderId) {
         if (!feature) return;
         const selected = question.name === name || (question.name === 'Scandinavië' && scandinavia.includes(name));
         const path = addPath(feature.geometry, selected && question.name === 'Scandinavië' ? question.name : name, 'map-region', i % 2 ? '#d08a6c' : '#e0a56f', selected);
+        path.setAttribute('data-country', name);
         path.setAttribute('stroke', '#fff');
         path.setAttribute('stroke-width', '0.8');
         path.setAttribute('fill-rule', 'evenodd');
