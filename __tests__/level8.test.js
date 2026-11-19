@@ -60,9 +60,9 @@ describe('Level 8 rendering and gameplay', () => {
       document.getElementById('map').innerHTML = '';
       await vm.runInContext(`renderNorthernEurope(level8Data[${i}], document.getElementById('map'), ++mapRenderId)`, context);
       const highlighted = [...document.querySelectorAll('#map .highlighted')];
-      expect(highlighted.length).toBe(level8Data[i].name === 'Scandinavië' ? 4 : 1);
+      expect(highlighted.length).toBe(level8Data[i].name === 'Scandinavië' ? 3 : 1);
       expect(document.querySelector('#map [data-country="Finland"]').classList.contains('highlighted')).toBe(
-        ['Scandinavië', 'Finland'].includes(level8Data[i].name)
+        level8Data[i].name === 'Finland'
       );
       highlighted.forEach(element => expect(element.dataset.region).toBe(level8Data[i].name));
       if (['Engeland', 'Schotland', 'Vlaanderen', 'Wallonië', 'Ardennen'].includes(level8Data[i].name)) {

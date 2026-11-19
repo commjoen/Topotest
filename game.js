@@ -866,7 +866,7 @@ async function renderNorthernEurope(question, mapSvg, renderId) {
     });
 
     const countryNames = ['IJsland', 'Ierland', 'Verenigd Koninkrijk', 'Noorwegen', 'Zweden', 'Finland', 'Denemarken', 'Estland', 'Letland', 'Litouwen', 'Nederland', 'België', 'Frankrijk', 'Duitsland', 'Polen', 'Luxemburg'];
-    const scandinavia = ['Noorwegen', 'Zweden', 'Finland', 'Denemarken'];
+    const scandinavia = ['Noorwegen', 'Zweden', 'Denemarken'];
     countryNames.forEach((name, i) => {
         const feature = find(name, 'country');
         if (!feature) return;
