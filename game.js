@@ -866,12 +866,13 @@ async function renderNorthernEurope(question, mapSvg, renderId) {
     });
 
     const countryNames = ['IJsland', 'Ierland', 'Verenigd Koninkrijk', 'Noorwegen', 'Zweden', 'Finland', 'Denemarken', 'Estland', 'Letland', 'Litouwen', 'Nederland', 'België', 'Frankrijk', 'Duitsland', 'Polen', 'Luxemburg'];
-    const scandinavia = ['Noorwegen', 'Zweden', 'Finland', 'Denemarken'];
+    const scandinavia = ['Noorwegen', 'Zweden', 'Denemarken'];
     countryNames.forEach((name, i) => {
         const feature = find(name, 'country');
         if (!feature) return;
         const selected = question.name === name || (question.name === 'Scandinavië' && scandinavia.includes(name));
         const path = addPath(feature.geometry, selected && question.name === 'Scandinavië' ? question.name : name, 'map-region', i % 2 ? '#d08a6c' : '#e0a56f', selected);
+        path.setAttribute('data-country', name);
         path.setAttribute('stroke', '#fff');
         path.setAttribute('stroke-width', '0.8');
         path.setAttribute('fill-rule', 'evenodd');
